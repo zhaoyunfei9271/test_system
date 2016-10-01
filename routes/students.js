@@ -6,7 +6,7 @@
 
 router.get('/', function(req, res, next) {
     // 学生管理功能模块
-    res.render('index', { title: 'Express' });
+    res.render('students', { title: 'Express' });
 });
 
 function check_info(_id, name, age, grade) {

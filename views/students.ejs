@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="icon" href="/images/favicon.ico">
+    <title>英语测试系统</title>
+
+    <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/stylesheets/base.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/">英语测试系统</a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="#">保留1</a></li>
+                    <li><a href="#">保留1</a></li>
+                    <li><a href="#">保留1</a></li>
+                    <li><a href="#">保留1</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div id="leftbar">
+        <div class="viewFramework-navbar">
+            <div class="nav-title">
+                英语测试系统
+            </div>
+            <div class="nav-list">
+                <ul class="expmenu">
+                    <li>
+                        <div class="header_title">学生管理<span class="arrow down"></span></div>
+                        <ul class="menu" style="overflow: hidden; display: none;">
+                            <li class="admin_student_info"><a href="/admin/student/info" target="context">学生管理</a></li>
+                            <li class=""><a href="" target="context">学生能力展示</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script src="/javascripts/jquery-2.0.3.min.js"></script>
+    <script type="text/javascript">
+        $(function() {
+            $("ul.expmenu li > div.header_title").on('click', function() {
+                var arrow = $(this).find("span.arrow");
+                if (arrow.hasClass("up")) {
+                    arrow.removeClass("up").addClass("down");
+                } else if (arrow.hasClass("down")) {
+                    arrow.removeClass("down").addClass("up");
+                }
+                $(this).parent().find("ul.menu").slideToggle();
+            });
+        })
+    </script>
+</body>
+
+</html>
