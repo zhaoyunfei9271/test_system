@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="icon" href="/images/favicon.ico">
+    <title>英语测试系统</title>
+
+    <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/stylesheets/base.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/">英语测试系统</a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="#">保留1</a></li>
+                    <li><a href="#">保留1</a></li>
+                    <li><a href="#">保留1</a></li>
+                    <li><a href="#">保留1</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div id="leftbar">
+        <div class="viewFramework-navbar">
+            <div class="nav-title">
+                英语测试系统
+            </div>
+            <div class="nav-list">
+                <ul class="expmenu">
+                    <li>
+                        <div class="header_title">学生管理<span class="arrow down"></span></div>
+                        <ul class="menu" style="overflow: hidden; display: none;">
+                            <li class="admin_student_info"><a href="/admin/student/info" target="context">学生管理</a></li>
+                            <li class=""><a href="" target="context">学生能力展示</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="proset_breadcrumb">
+        <h5>学生管理</h5>
+    </div>
+
+
+    <div class="form-group">
+        <div class="form-inline" style="positive:relative;">
+            <div class="form-group">
+                <input type="text" name="name" id="search_name" class="form-control inline-block" placeholder="名称" style="width:120px;"  value="" />
+                <input type="text" name="grade" id="search_grade" class="form-control inline-block" placeholder="年级" style="width:120px;"  value="" />
+                <select name="sex" id="search_sex" class="form-control inline-block" value="">
+                    <option value="">请选择一个性别</option>
+                    <option value="0">男</option>
+                    <option value="1">女</option>
+                </select>
+            </div>
+            <button type="button" id="search" class="btn btn-success btn-sm"><i class="icon-search"></i>查询</button>
+            <div class="btn-group pull-right" >
+                <a class="btn btn-sm btn-success btn_add"><i class="icon-trash"></i>新增</a>
+            </div>
+        </div>
+    </div>
+
+
+    <table class="table table-bordered table-hover">
+        <thead>
+        <tr>
+            <th width="50px" class="text-center">
+                <input type="checkbox" class="outerCheck">
+            </th>
+            <th>名称</th>
+            <th>性别</th>
+            <th>年龄</th>
+            <th>年级</th>
+            <th>邮箱</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for item in students %}
+        <tr _id="{{item._id}}">
+            <td width="50px" class="text-center">
+                <input type="checkbox" class="CheckBox">
+            </td>
+            <td>{{item.name}}</td>
+            <td>{% if '0' == item.sex %}男{% else %}女{% endif %}</td>
+            <td>{{item.age}}</td>
+            <td>{{item.grade}}</td>
+            <td>{{item.email}}</td>
+            <td width="150px;" class="operate">
+                <div class="btn-group">
+                    <button class="btn btn-xs btn-primary btn_edit">编辑</button>
+                    <button class="btn btn-xs btn-danger btn_del">删除</button>
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- 新增/编辑单选题 -->
+    <div class="modal fade in" id="update_modal">
+        <form action="/student/update" method="post" class="form-horizontal validform">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h5 class="modal-title">新增/编辑模态框</h5>
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="modal-body">
+                        <input type="hidden" name="_id" value="">
+                        <div class="form-group">
+                            <label class="col-xs-2 control-label label_name">名称</label>
+                            <div class="col-xs-8">
+                                <input class="form-control input_empty" name="name" datatype="*" nullmsg="请输入问题">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-xs-2 control-label label_name">年龄</label>
+                            <div class="col-xs-8">
+                                <input class="form-control input_empty" name="age" datatype="n" errormsg="请输入整数" ignore="ignore">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-xs-2 control-label label_name">性别</label>
+                            <div class="col-xs-8">
+                                <select class="form-control" name="sex">
+                                    <option value="0">男</option>
+                                    <option value="1">女</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-xs-2 control-label label_name">邮箱</label>
+                            <div class="col-xs-8">
+                                <input class="form-control input_empty" name="email">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-xs-2 control-label label_name">年级</label>
+                            <div class="col-xs-8">
+                                <input class="form-control input_empty" name="grade" datatype="n" errormsg="年级为整数" ignore="ignore">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">
+                            关闭
+                            <span class="glyphicon glyphicon-off"></span>
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            保存
+                            <span class="glyphicon glyphicon-floppy-disk"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <script src="/javascripts/jquery-2.0.3.min.js"></script>
+    <script type="text/javascript">
+        $(function() {
+            $("ul.expmenu li > div.header_title").on('click', function() {
+                var arrow = $(this).find("span.arrow");
+                if (arrow.hasClass("up")) {
+                    arrow.removeClass("up").addClass("down");
+                } else if (arrow.hasClass("down")) {
+                    arrow.removeClass("down").addClass("up");
+                }
+                $(this).parent().find("ul.menu").slideToggle();
+            });
+        })
+    </script>
+</body>
+
+</html>

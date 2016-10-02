@@ -1,11 +1,10 @@
-express = require('express');
-router = express.Router();
+var express = require('express');
+var swig = require('swig');
 var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var MongoClient = require('mongodb').MongoClient;
 assert = require('assert');
 
 var routes = require('./routes/index');
@@ -14,17 +13,11 @@ var students = require('./routes/students');
 var app = express();
 
 // init
-mongo = null;
-var url = 'mongodb://localhost:27017/test_system';
-MongoClient.connect(url, function (err, db) {
-    assert.equal(null, err);
-    console.log("Connected successfully to server");
-    mongo = db;
-});
 
 // view engine setup
+app.engine('html', swig.renderFile);
+app.set('view engine', 'html');
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'ejs');
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
