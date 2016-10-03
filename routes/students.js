@@ -20,7 +20,7 @@ var cal = function(collection) {
         collection.find({}).toArray(function(err, students) {
             if (!err) {
                 console.log(students);
-                res.render('students', {students: students});
+                res.render('students_test', {students: students});
             }
         });
     });
