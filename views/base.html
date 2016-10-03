@@ -46,6 +46,10 @@
             line-height: 30px;
             position: absolute;
         }
+        .leftbar_collapse {
+            display: none;
+            left: 0px;
+        }
         /*
         * 右侧栏
         */
@@ -79,6 +83,16 @@
             list-style: none;
             line-height: 40px;
         }
+        .menu li a{
+            list-style: none;
+            line-height: 40px;
+            padding-left: 33px;
+            color: #747a80;
+            display: block;
+        }
+        /*
+        * 左侧栏标题的伸展和收缩部分
+        */
         .header_title {
             display: block;
             color: #44494e;
@@ -88,6 +102,20 @@
         .header_title:hover {
             background: #dfe4e9;
             color: #464c53;
+        }
+        .header_title > .arrow.up {
+            background: url(/images/arrow_u.png) no-repeat;
+        }
+        .header_title > .arrow.down {
+            background: url(/images/arrow_d.png) no-repeat;
+        }
+        ul.expmenu > li > div.header_title > .arrow {
+            display: block;
+            width: 13px;
+            height: 16px;
+            position: absolute;
+            left: 12px;
+            top: 15px;
         }
 
     </style>
@@ -132,6 +160,18 @@
     </div>
 </div>
 <script type="text/javascript">
+    $(function () {
+        $('.header_title').on('click', function () {
+            var arrow = $(this).find('span.arrow');
+            if (arrow.hasClass("up")) arrow.removeClass('up').addClass('down');
+            else if (arrow.hasClass('down')) arrow.removeClass('down').addClass('up');
+            $(this).parent().find('ul.menu').slideToggle();
+        });
+        $('.viewFramework-navbar-collapse').on('click', function() {
+            $('.viewFramework').toggleClass('leftbar_collapse');
+            $(this).find('.navbar-collapse-bg span').toggleClass("icon-caret-right");
+        })
+    })
 
 </script>
 {% block js %}
