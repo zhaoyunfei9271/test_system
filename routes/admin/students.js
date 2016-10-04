@@ -18,7 +18,17 @@ var cal = function (collection) {
   router.get('/info', function (req, res, next) {
     collection.find({}).toArray(function (err, students) {
       if (!err) {
-        res.render('students_test', {students: students});
+        res.render('admin/students_info', {students: students});
+      }
+    });
+  });
+  // 获取单个学生数据
+  router.get('/info/one', function(req, res) {
+    var _id = req.body._id;
+    if("" == _id) res.send({status: false, msg: '所传递的_id不可为空!'});
+    collection.findOne({_id: _id}, function(err, student) {
+      if (!err) {
+        res.send({status: true, student: student});
       }
     });
   });
@@ -35,6 +45,7 @@ var cal = function (collection) {
     if (isNaN(grade)) {
       return {status: false, msg: '年级必须为整数'};
     }
+    console.log("1");
     if (_id) {
       collection.find({_id: _id, name: name}).count(function (err, count) {
         if (1 != count) {
@@ -42,12 +53,15 @@ var cal = function (collection) {
         }
       });
     } else {
+      console.log("2");
       collection.find({name: name}).count(function (err, count) {
+        console.log("3");
         if (0 != count) {
           return {status: false, msg: '新增情况下, 数据库中已经存在此名称!'};
         }
       });
     }
+    console.log("4");
     return {status: true, msg: '正确'};
   }
 
