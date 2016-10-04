@@ -6,6 +6,64 @@
 {% endblock %}
 
 {% block content %}
+<div class="">
+  <h5>学生管理</h5>
+</div>
+
+<div class="form-group">
+  <div class="form-inline" style="position: relative;">
+    <div class="form-group">
+      <input type="text" name="name" id="search_name" class="form-control inline-block" placeholder="名称" style="width: 120px;" value="{{name}}">
+      <input type="text" name="grade" id="search_grade" class="form-control inline-block" placeholder="年级" style="width: 120px;" value="{{grade}}">
+      <select name="sex" id="search_sex" class="form-control inline-block" value="">
+        <option value="">请选择一个性别</option>
+        <option value="0">男</option>
+        <option value="1">女</option>
+      </select>
+    </div>
+    <button type="button" id="search" class="btn btn-success btn-sm"><i class="icon-search"></i>查询</button>
+    <div class="btn-group pull-right">
+      <a class="btn btn-sm btn-success btn_add"><i class="icon-trash"></i>新增</a>
+    </div>
+  </div>
+</div>
+
+<table class="table table-bordered table-hover">
+  <thead>
+  <tr>
+    <th width="50px" class="text-center">
+      <input type="checkbox" class="outerCheck">
+    </th>
+    <th>名称</th>
+    <th>性别</th>
+    <th>年龄</th>
+    <th>年级</th>
+    <th>邮箱</th>
+    <th>操作</th>
+  </tr>
+  </thead>
+  <tbody>
+    {% for item in students %}
+      <tr _id="{{item._id}}">
+        <td width="50px" class="text-center">
+          <input type="checkbox" class="CheckBox">
+        </td>
+        <td>{{item.name}}</td>
+        <td>{% if '0' == item.sex %}男{% else %}女{% endif %}</td>
+        <td>{{item.age}}</td>
+        <td>{{item.grade}}</td>
+        <td>{{item.email}}</td>
+        <td width="150px;" class="operate">
+          <div class="btn-group">
+            <button class="btn btn-xs btn-primary btn_edit">编辑</button>
+            <button class="btn btn-xs btn-danger btn_del">删除</button>
+          </div>
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
 {% endblock %}
 
 {% block js %}
