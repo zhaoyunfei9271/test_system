@@ -1,177 +1,210 @@
 <!DOCTYPE html>
 <html lang="zn">
 <head>
-    <meta charset="UTF-8">
-    <title>英语测试系统</title>
-    <meta name="keywords" content="英语测试系统" />
-    <meta name="description" content="英语测试系统" />
-    <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <script src="/javascripts/jquery-2.0.3.min.js"></script>
-    <script src="/bootstrap/js/bootstrap.min.js"></script>
-    <style type="text/css">
-        /*
-        * 左侧栏
-        */
-        .viewFramework-navbar {
-            width: 160px;
-            display: inline-block;
-            background-color: #EAEDF1;
-            position: fixed;
-            top: 0px;
-            bottom: 0px;
-            overflow: hidden;
-            z-index: 1;
-        }
-        /*
-        * 左侧栏收缩
-        */
-        .viewFramework-navbar-collapse {
-            position: relative;
-            cursor: pointer;
-            left: 147px;
-            top: 300px;
-            display: inline-block;
-            width: 13px;
-            height: 50px;
-            z-index: 2;
-        }
-        .navbar-collapse-bg {
-            right: 0px;
-            left: auto;
-            border-bottom: 9px solid transparent;
-            border-left: none;
-            border-top: 9px solid transparent;
-            width: 0px;
-            height: 50px;
-            line-height: 30px;
-            position: absolute;
-        }
-        .leftbar_collapse {
-            display: none;
-            left: 0px;
-        }
-        /*
-        * 右侧栏
-        */
-        .viewFramework-body {
-            margin-left: 170px;
-            margin-right: 7px;
-            margin-top: 9px;
-        }
-        /*
-        * 左侧栏标题
-        */
-        .nav-title {
-            background: #dfe4e9;
-            height: 41px;
-            width: 160px;
-            line-height: 41px;
-            -ms-text-overflow: ellipsis;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            padding-left: 15px;
-            font-size: 14px;
-            overflow: hidden;
-            color: #2e86b8;
-            border-bottom: 1px solid #d7d8da;
-        }
-        .nav-list ul {
-            margin: 0px;
-            padding: 0px;
-        }
-        .nav-list ul li {
-            list-style: none;
-            line-height: 40px;
-        }
-        .menu li a{
-            list-style: none;
-            line-height: 40px;
-            padding-left: 33px;
-            color: #747a80;
-            display: block;
-        }
-        /*
-        * 左侧栏标题的伸展和收缩部分
-        */
-        .header_title {
-            display: block;
-            color: #44494e;
-            padding-left: 30px;
-            position: relative;
-        }
-        .header_title:hover {
-            background: #dfe4e9;
-            color: #464c53;
-        }
-        .header_title > .arrow.up {
-            background: url(/images/arrow_u.png) no-repeat;
-        }
-        .header_title > .arrow.down {
-            background: url(/images/arrow_d.png) no-repeat;
-        }
-        ul.expmenu > li > div.header_title > .arrow {
-            display: block;
-            width: 13px;
-            height: 16px;
-            position: absolute;
-            left: 12px;
-            top: 15px;
-        }
+  <meta charset="UTF-8">
+  <title>英语测试系统</title>
+  <meta name="keywords" content="英语测试系统" />
+  <meta name="description" content="英语测试系统" />
+  <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <script src="/javascripts/jquery-2.0.3.min.js"></script>
+  <script src="/bootstrap/js/bootstrap.min.js"></script>
+  <style type="text/css">
+    /*
+    * 左侧栏
+    */
+    .viewFramework-navbar {
+      width: 160px;
+      display: inline-block;
+      background-color: #EAEDF1;
+      position: fixed;
+      top: 0px;
+      bottom: 0px;
+      overflow: hidden;
+      z-index: 1;
+    }
+    /*
+    * 左侧栏收缩
+    */
+    .viewFramework-navbar-collapse {
+      position: relative;
+      cursor: pointer;
+      left: 147px;
+      top: 300px;
+      display: inline-block;
+      width: 13px;
+      height: 50px;
+      z-index: 2;
+    }
+    .navbar-collapse-bg {
+      right: 0px;
+      left: auto;
+      border-bottom: 9px solid transparent;
+      border-left: none;
+      border-top: 9px solid transparent;
+      width: 0px;
+      height: 50px;
+      line-height: 30px;
+      position: absolute;
+    }
+    .leftbar_collapse {
+      display: none;
+      left: 0px;
+    }
+    /*
+    * 右侧栏
+    */
+    .viewFramework-body {
+      margin-left: 170px;
+      margin-right: 7px;
+      margin-top: 9px;
+    }
+    /*
+    * 左侧栏标题
+    */
+    .nav-title {
+      background: #dfe4e9;
+      height: 41px;
+      width: 160px;
+      line-height: 41px;
+      -ms-text-overflow: ellipsis;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      padding-left: 15px;
+      font-size: 14px;
+      overflow: hidden;
+      color: #2e86b8;
+      border-bottom: 1px solid #d7d8da;
+    }
+    .nav-list ul {
+      margin: 0px;
+      padding: 0px;
+    }
+    .nav-list ul li {
+      list-style: none;
+      line-height: 40px;
+    }
+    .menu li a{
+      list-style: none;
+      line-height: 40px;
+      padding-left: 33px;
+      color: #747a80;
+      display: block;
+    }
+    /*
+    * 左侧栏标题的伸展和收缩部分
+    */
+    .header_title {
+      display: block;
+      color: #44494e;
+      padding-left: 30px;
+      position: relative;
+    }
+    .header_title:hover {
+      background: #dfe4e9;
+      color: #464c53;
+    }
+    .header_title > .arrow.up {
+      background: url(/images/arrow_u.png) no-repeat;
+    }
+    .header_title > .arrow.down {
+      background: url(/images/arrow_d.png) no-repeat;
+    }
+    ul.expmenu > li > div.header_title > .arrow {
+      display: block;
+      width: 13px;
+      height: 16px;
+      position: absolute;
+      left: 12px;
+      top: 15px;
+    }
 
-    </style>
-    {% block style %}
-    {% endblock %}
+  </style>
+  {% block style %}
+  {% endblock %}
 </head>
 <body>
 <div id="viewFramework">
-    <!-- 左侧栏 -->
-    <div class="viewFramework-navbar">
-        <div class="nav-title">
-            英语测试系统
-        </div>
-        <div class="nav-list">
-            <ul class="expmenu">
-                <li>
-                    <div class="header_title">题库<span class="arrow down"></span></div>
-                    <ul class="menu" style="overflow: hidden; display: none;">
-                        <li class="admin_lib_single_sel"><a href="/admin/lib/single_sel" target="content">单选题</a></li>
-                    </ul>
-                </li>
-                <li>
-                    <div class="header_title">学生管理<span class="arrow down"></span></div>
-                    <ul class="menu" style="overflow: hidden; display: none;">
-                        <li class="admin_student_info"><a href="/admin/student/info" target="content">学生管理</a></li>
-                        <li class="admin_student_level"><a href="/admin/student/level" target="content">学生能力展示</a></li>
-                    </ul>
-                </li>
-            </ul>
-        </div>
+  <!-- 左侧栏 -->
+  <div class="viewFramework-navbar">
+    <div class="nav-title">
+      英语测试系统
     </div>
-    <!-- 左侧栏收缩框 -->
-    <div class="viewFramework-navbar-collapse">
-        <div class="navbar-collapse-bg">
-            <span class="icon-caret-left"></span>
-        </div>
+    <div class="nav-list">
+      <ul class="expmenu">
+        <li>
+          <div class="header_title">题库<span class="arrow down"></span></div>
+          <ul class="menu" style="overflow: hidden; display: none;">
+            <li class="admin_lib_single_sel"><a href="/admin/lib/single_sel" target="content">单选题</a></li>
+            <li class="admin_lib_completion"><a href="/admin/lib/completion" target="content">填空题</a></li>
+            <li class="admin_lib_translation"><a href="/admin/lib/translation" target="content">翻译题</a></li>
+            <li class="admin_lib_answer"><a href="/admin/lib/answer" target="content">解答题</a></li>
+          </ul>
+        </li>
+        <li>
+          <div class="header_title">学生<span class="arrow down"></span></div>
+          <ul class="menu" style="overflow: hidden; display: none;">
+            <li class="admin_student_info"><a href="/admin/students/info" target="content">学生管理</a></li>
+            <li class="admin_student_level"><a href="/admin/students/level" target="content">学生能力展示</a></li>
+          </ul>
+        </li>
+        <li>
+          <div class="header_title">英语挑战系列<span class="arrow down"></span></div>
+          <ul class="menu" style="overflow: hidden; display: none;">
+            <li class="fight_single_sel"><a href="/fight/single_sel" target="content">单选题挑战</a></li>
+          </ul>
+        </li>
+        <li>
+          <div class="header_title">英语挑战记录<span class="arrow down"></span></div>
+          <ul class="menu" style="overflow: hidden; display: none;">
+            <li class="record_single_sel"><a href="/record/single_sel" target="content">单选题挑战记录</a></li>
+          </ul>
+        </li>
+      </ul>
     </div>
-    <!-- 右侧栏具体内容 -->
-    <div class="viewFramework-body">
-        {% block content %}
-        {% endblock %}
+  </div>
+  <!-- 左侧栏收缩框 -->
+  <div class="viewFramework-navbar-collapse">
+    <div class="navbar-collapse-bg">
+      <span class="icon-caret-left"></span>
     </div>
+  </div>
+  <!-- 右侧栏具体内容 -->
+  <div class="viewFramework-body">
+    {% block content %}
+    {% endblock %}
+  </div>
 </div>
 <script type="text/javascript">
-    $(function () {
-        $('.header_title').on('click', function () {
-            var arrow = $(this).find('span.arrow');
-            if (arrow.hasClass("up")) arrow.removeClass('up').addClass('down');
-            else if (arrow.hasClass('down')) arrow.removeClass('down').addClass('up');
-            $(this).parent().find('ul.menu').slideToggle();
-        });
-        $('.viewFramework-navbar-collapse').on('click', function() {
-            $('.viewFramework').toggleClass('leftbar_collapse');
-            $(this).find('.navbar-collapse-bg span').toggleClass("icon-caret-right");
-        })
-    })
+'use strict';
+$(function () {
+  $('.header_title').on('click', function () {
+    var arrow = $(this).find('span.arrow');
+    if (arrow.hasClass("up")) arrow.removeClass('up').addClass('down');
+    else if (arrow.hasClass('down')) arrow.removeClass('down').addClass('up');
+    $(this).parent().find('ul.menu').slideToggle();
+  });
+  $('.viewFramework-navbar-collapse').on('click', function() {
+    $('.viewFramework').toggleClass('leftbar_collapse');
+    $(this).find('.navbar-collapse-bg span').toggleClass("icon-caret-right");
+  });
+  function set_nav(nav) {
+    $('.expmenu li').removeClass('selected');
+    $('.expmenu .menu').css('display', 'none');
+
+    var exp = '.expmenu .' + nav;
+    $(exp).addClass('selected');
+    if (0 != $(exp).parents('.menu')) {
+      $(exp).parents('.menu').css('display', 'block');
+    }
+    $("ul.expmenu li > ul.menu").each(function(i, item) {
+      if ('block' == $(item).css('display')) {
+        $(item).siblings('.header_title').find('span.arrow').removeClass('down').addClass('up');
+      } else {
+        $(item).siblings('.header_title').find('span.arrow').removeClass('up').addClass('down');
+      }
+    });
+  }
+});
 
 </script>
 {% block js %}
