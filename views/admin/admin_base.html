@@ -176,35 +176,33 @@
 </div>
 <script type="text/javascript">
 'use strict';
-$(function () {
-  $('.header_title').on('click', function () {
-    var arrow = $(this).find('span.arrow');
-    if (arrow.hasClass("up")) arrow.removeClass('up').addClass('down');
-    else if (arrow.hasClass('down')) arrow.removeClass('down').addClass('up');
-    $(this).parent().find('ul.menu').slideToggle();
-  });
-  $('.viewFramework-navbar-collapse').on('click', function() {
-    $('.viewFramework').toggleClass('leftbar_collapse');
-    $(this).find('.navbar-collapse-bg span').toggleClass("icon-caret-right");
-  });
-  function set_nav(nav) {
-    $('.expmenu li').removeClass('selected');
-    $('.expmenu .menu').css('display', 'none');
-
-    var exp = '.expmenu .' + nav;
-    $(exp).addClass('selected');
-    if (0 != $(exp).parents('.menu')) {
-      $(exp).parents('.menu').css('display', 'block');
-    }
-    $("ul.expmenu li > ul.menu").each(function(i, item) {
-      if ('block' == $(item).css('display')) {
-        $(item).siblings('.header_title').find('span.arrow').removeClass('down').addClass('up');
-      } else {
-        $(item).siblings('.header_title').find('span.arrow').removeClass('up').addClass('down');
-      }
-    });
-  }
+$('.header_title').on('click', function () {
+  var arrow = $(this).find('span.arrow');
+  if (arrow.hasClass("up")) arrow.removeClass('up').addClass('down');
+  else if (arrow.hasClass('down')) arrow.removeClass('down').addClass('up');
+  $(this).parent().find('ul.menu').slideToggle();
 });
+$('.viewFramework-navbar-collapse').on('click', function() {
+  $('.viewFramework').toggleClass('leftbar_collapse');
+  $(this).find('.navbar-collapse-bg span').toggleClass("icon-caret-right");
+});
+function set_nav(nav) {
+  $('.expmenu li').removeClass('selected');
+  $('.expmenu .menu').css('display', 'none');
+
+  var exp = '.expmenu .' + nav;
+  $(exp).addClass('selected');
+  if (0 != $(exp).parents('.menu')) {
+    $(exp).parents('.menu').css('display', 'block');
+  }
+  $("ul.expmenu li > ul.menu").each(function(i, item) {
+    if ('block' == $(item).css('display')) {
+      $(item).siblings('.header_title').find('span.arrow').removeClass('down').addClass('up');
+    } else {
+      $(item).siblings('.header_title').find('span.arrow').removeClass('up').addClass('down');
+    }
+  });
+}
 
 </script>
 {% block js %}

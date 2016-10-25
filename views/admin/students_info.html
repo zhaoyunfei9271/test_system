@@ -13,8 +13,8 @@
 <div class="form-group">
   <div class="form-inline" style="position: relative;">
     <div class="form-group">
-      <input type="text" name="name" id="search_name" class="form-control inline-block" placeholder="名称" style="width: 120px;" value="{{name}}">
-      <input type="text" name="grade" id="search_grade" class="form-control inline-block" placeholder="年级" style="width: 120px;" value="{{grade}}">
+      <input type="text" name="name" id="search_name" class="form-control inline-block" placeholder="名称" style="width: 120px;" value="">
+      <input type="text" name="grade" id="search_grade" class="form-control inline-block" placeholder="年级" style="width: 120px;" value="">
       <select name="sex" id="search_sex" class="form-control inline-block" value="">
         <option value="">请选择一个性别</option>
         <option value="0">男</option>
@@ -44,7 +44,7 @@
   </thead>
   <tbody>
     {% for item in students %}
-      <tr _id="{{item._id}}">
+      <tr _id="{{item._id.toString()}}">
         <td width="50px" class="text-center">
           <input type="checkbox" class="CheckBox">
         </td>
@@ -131,6 +131,14 @@
 <script src="/javascripts/Validform_v5.3.2_min.js"></script>
 <script type="text/javascript">
 $(function() {
+  set_nav('admin_student_info');
+  // 初始化
+  function init() {
+    $('#search_name').val("{{name}}");
+    $('#search_grade').val("{{grade}}");
+    $('#search_sex').val("{{sex}}");
+  }
+  init();
   // 新增
   $('.btn_add').on('click', function() {
     var _form = $('#update_modal');
@@ -145,6 +153,7 @@ $(function() {
     var _form = $('#update_modal');
     _form.find("input[name='_id']").val(_id);
     _form.find("input[name='name']").attr("readonly", true);
+    console.log(_id);
     $.get('/admin/students/info/one', {'_id': _id}, function(rs) {
       if (rs.status) {
         var student = rs.student;
@@ -171,6 +180,22 @@ $(function() {
         }
       });
     }
+  });
+  // 查询
+  function search() {
+    var name = $('#search_name').val(),
+        grade = $('#search_grade').val(),
+        sex = $('#search_sex').val(),
+        url = "/admin/students/info?",
+        cond = '';
+    if (name) cond += '&name=' + name;
+    if (grade) cond += '&grade=' + grade;
+    if (sex) cond += '&sex=' + sex;
+    if (cond) location.href = url + cond.substring(1, cond.length);
+    else location.href = url;
+  }
+  $('#search').on('click', function() {
+    search();
   });
 
   //处理表单

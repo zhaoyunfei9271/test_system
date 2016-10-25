@@ -7,6 +7,7 @@
 
 var express = require('express');
 var router = express.Router();
+var mongo = require('mongodb');
 // 连接数据库
 var MongoClient = require('mongodb').MongoClient,
   url = 'mongodb://localhost:27017/test_system';
@@ -25,18 +26,17 @@ function Router(collection) {
   * 前端传递的筛选条件: name, sex, grade
   * */
   router.get('/info', function(req, res) {
-    var name = req.body.name,
-      sex = req.body.sex,
-      grade = req.body.grade,
+    var name = req.query.name,
+      sex = req.query.sex,
+      grade = req.query.grade,
       search_cond = {};
     if (name) search_cond['name'] = {'$regex': name};
     if (sex && (sex == '0' || sex == '1')) search_cond['sex'] = sex;
-    grade = +grade;
-    if (!isNaN(grade)) search_cond['grade'] = grade;
+    if (!isNaN(+grade)) search_cond['grade'] = +grade;
 
     collection.find(search_cond).toArray()
       .then(function(students) {
-        res.render('admin/students_info', {students: students});
+        res.render('admin/students_info', {students: students, name: name, sex: sex, grade: grade});
       })
       .catch(function(err) {
         res.send({status: false, msg: '获取学生信息失败!'});
@@ -47,11 +47,12 @@ function Router(collection) {
   * 获取单个学生的信息
   * */
   router.get('/info/one', function(req, res) {
-    var _id = req.body._id;
+    var _id = req.query._id;
     if ("" == _id) {
       res.send({status: false, msg: '所传递的_id不可为空!'});
       return;
     }
+    _id = new mongo.ObjectID(_id);
     collection.findOne({_id: _id})
       .then(function(student) {
         res.send({status: true, student: student});
@@ -70,6 +71,7 @@ function Router(collection) {
       res.send({status: false, msg: '所传递的_id不可为空!'});
       return;
     }
+    _id = new mongo.ObjectID(_id);
     collection.deleteOne({_id: _id})
       .then(function(){
         res.send({status: true, msg: '删除成功!'});
@@ -125,6 +127,7 @@ function Router(collection) {
       name = req.body.name,
       age = +req.body.age,
       email = req.body.email;
+    if (_id) _id = new mongo.ObjectID(_id);
     var result = check_info(_id, name, age, grade);
     if (!result.status) {
       res.send({status: false, msg: result.msg});
