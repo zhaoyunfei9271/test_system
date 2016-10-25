@@ -3,36 +3,85 @@
  * 文档参考: doc/dbtables/student.md
  * 支持的操作为: 新增, 编辑, 修改, 批量删除
  */
+'use strict';
+
 var express = require('express');
 var router = express.Router();
-var init = function (callback) {
-  var MongoClient = require('mongodb').MongoClient;
-  var url = 'mongodb://localhost:27017/test_system';
-  MongoClient.connect(url, function (err, db) {
-    console.log("Connected successfully to server");
+// 连接数据库
+var MongoClient = require('mongodb').MongoClient,
+  url = 'mongodb://localhost:27017/test_system';
+MongoClient.connect(url)
+  .then(function(db) {
     var collection = db.collection('students');
-    callback(collection);
+    Router(collection);
+  })
+  .catch(function(err) {
+    console.log("connected db failed!");
   });
-};
-var cal = function (collection) {
-  router.get('/info', function (req, res, next) {
-    collection.find({}).toArray(function (err, students) {
-      if (!err) {
+
+function Router(collection) {
+  /*
+  * 获取所有的学生信息
+  * 前端传递的筛选条件: name, sex, grade
+  * */
+  router.get('/info', function(req, res) {
+    var name = req.body.name,
+      sex = req.body.sex,
+      grade = req.body.grade,
+      search_cond = {};
+    if (name) search_cond['name'] = {'$regex': name};
+    if (sex && (sex == '0' || sex == '1')) search_cond['sex'] = sex;
+    grade = +grade;
+    if (!isNaN(grade)) search_cond['grade'] = grade;
+
+    collection.find(search_cond).toArray()
+      .then(function(students) {
         res.render('admin/students_info', {students: students});
-      }
-    });
+      })
+      .catch(function(err) {
+        res.send({status: false, msg: '获取学生信息失败!'});
+      });
   });
-  // 获取单个学生数据
+
+  /*
+  * 获取单个学生的信息
+  * */
   router.get('/info/one', function(req, res) {
     var _id = req.body._id;
-    if("" == _id) res.send({status: false, msg: '所传递的_id不可为空!'});
-    collection.findOne({_id: _id}, function(err, student) {
-      if (!err) {
+    if ("" == _id) {
+      res.send({status: false, msg: '所传递的_id不可为空!'});
+      return;
+    }
+    collection.findOne({_id: _id})
+      .then(function(student) {
         res.send({status: true, student: student});
-      }
-    });
+      })
+      .catch(function(err) {
+        res.send({status: false, msg: '获取单个学生信息失败!'});
+      });
   });
-  // 检查所传入的数据是否有效
+
+  /*
+  * 删除单个学生的信息
+  * */
+  router.post('/info/del', function(req, res) {
+    var _id = req.body._id;
+    if ("" == _id) {
+      res.send({status: false, msg: '所传递的_id不可为空!'});
+      return;
+    }
+    collection.deleteOne({_id: _id})
+      .then(function(){
+        res.send({status: true, msg: '删除成功!'});
+      })
+      .catch(function(err) {
+        res.send({status: false, msg: '删除失败!'});
+      });
+  });
+
+  /*
+  * 更新单个学生的信息
+  * */
   function check_info(_id, name, age, grade) {
     if ("" == name) {
       return {status: false, msg: '名称不可为空'};
@@ -45,75 +94,60 @@ var cal = function (collection) {
     if (isNaN(grade)) {
       return {status: false, msg: '年级必须为整数'};
     }
-    console.log("1");
     if (_id) {
-      collection.find({_id: _id, name: name}).count(function (err, count) {
-        if (1 != count) {
-          return {status: false, msg: '编辑情况下, 名称不可更改!'};
-        }
-      });
+      collection.find({_id: _id, name: name}).count()
+        .then(function (count) {
+          if (1 != count) {
+            return {status: false, msg: '编辑情况下, 名称不可更改!'};
+          }
+        })
+        .catch(function (err) {
+          return {status: false, msg: '数据库查询未知错误!'};
+        });
     } else {
-      console.log("2");
-      collection.find({name: name}).count(function (err, count) {
-        console.log("3");
-        if (0 != count) {
-          return {status: false, msg: '新增情况下, 数据库中已经存在此名称!'};
-        }
-      });
+      collection.find({name: name}).count()
+        .then(function (count) {
+          if (0 != count) {
+            return {status: false, msg: '新增情况下, 数据库中已经存在此名称!'};
+          }
+        })
+        .catch(function (err) {
+          return {status: false, msg: '数据库查询未知错误!'};
+        });
     }
-    console.log("4");
+
     return {status: true, msg: '正确'};
   }
-
-  // 更新学生数据
-  router.post('/info/update', function (req, res) {
-    var _id = req.body._id;
-    var sex = req.body.sex;
-    var grade = parseInt(req.body.grade);
-    var name = req.body.name;
-    var age = parseInt(req.body.age);
-    var email = req.body.email;
+  router.post('/info/update', function(req, res) {
+    var _id = req.body._id,
+      sex = req.body.sex,
+      grade = +req.body.grade,
+      name = req.body.name,
+      age = +req.body.age,
+      email = req.body.email;
     var result = check_info(_id, name, age, grade);
     if (!result.status) {
       res.send({status: false, msg: result.msg});
       return;
     }
     if (!_id) {
-      collection.insertOne({name: name, sex: sex, grade: grade, age: age, email: email}, function (err, r) {
-        if (err) {
-          res.send({status: false, msg: '插入失败!'});
-        } else {
-          res.send({status: true, msg: '插入成功!'});
-        }
-      });
+      collection.insertOne({name: name, sex: sex, grade: grade, age: age, email: email})
+        .then(function() {
+          res.send({status: true, msg: '新增成功!'});
+        })
+        .catch(function(err) {
+          res.send({status: false, msg: '新增失败!'});
+        });
     } else {
-      collection.update({_id: _id}, {name: name, age: age, grade: grade, sex: sex, email: email}, function (err, r) {
-        if (err) {
-          res.send({status: false, msg: '更新失败!'});
-        } else {
-          res.send({status: true, msg: '更新成功!'});
-        }
-      });
+      collection.update({_id: _id}, {name: name, age: age, grade: grade, sex: sex, email: email})
+        .then(function() {
+          res.send({status: true, msg: '编辑成功!'});
+        })
+        .catch(function(err) {
+          res.send({status: false, msg: '编辑失败!'});
+        });
     }
   });
-  // 删除学生数据
-  router.post('/info/del', function (req, res) {
-    var _id = req.body._id;
-    if ("" == _id) {
-      res.send({status: false, msg: '所传递的_id不可为空!'});
-      return;
-    }
-    collection.deleteOne({_id: _id}, function (err, r) {
-      if (err) {
-        res.send({status: false, msg: '删除失败!'});
-      } else {
-        res.send({status: true, msg: '删除成功!'});
-      }
-    });
-  });
-
-};
-
-init(cal);
+}
 
 module.exports = router;
