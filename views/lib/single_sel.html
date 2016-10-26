@@ -1,0 +1,225 @@
+{% extends "../admin/admin_base.html" %}
+
+{% block style %}
+<style type="text/css">
+</style>
+{% endblock %}
+
+{% block content %}
+<div>
+  <h5>单选题库</h5>
+</div>
+
+<div class="form-group">
+  <div class="form-inline" style="position: relative;">
+    <div class="form-group">
+      <input type="text" name="question" id="search_question" class="form-control inline-block" placeholder="问题" style="width: 120px;" value="">
+    </div>
+    <button type="button" id="search" class="btn btn-success btn-sm"><i class="icon-search"></i>查询</button>
+    <div class="btn-group pull-right">
+      <a class="btn btn-sm btn-success btn_add"><i class="icon-trash"></i>新增</a>
+    </div>
+  </div>
+</div>
+
+<table class="table table-bordered table-hover">
+  <thead>
+  <tr>
+    <th width="50px" class="text-center">
+      <input type="checkbox" class="outerCheck">
+    </th>
+    <th>问题</th>
+    <th>选项</th>
+    <th>答案</th>
+    <th>操作</th>
+  </tr>
+  </thead>
+  <tbody>
+  {% for item in single_sels %}
+  <tr _id="{{item._id.toString()}}">
+    <td width="50px" class="text-center">
+      <input type="checkbox" class="CheckBox">
+    </td>
+    <td style="white-space: pre-line">{{item.question}}</td>
+    <td>
+      {% set selection = item.selection %}
+      {% if selection.A %}
+      <b>A</b>. {{selection.A}}&nbsp;&nbsp;
+      {% endif %}
+      {% if selection.B %}
+      <b>B</b>. {{selection.B}}&nbsp;&nbsp;
+      {% endif %}
+      {% if selection.C %}
+      <b>C</b>. {{selection.C}}&nbsp;&nbsp;
+      {% endif %}
+      {% if selection.D %}
+      <b>D</b>. {{selection.D}}&nbsp;&nbsp;
+      {% endif %}
+    </td>
+    <td>{{item.answer}}</td>
+    <td width="150px;" class="operate">
+      <div class="btn-group">
+        <button class="btn btn-xs btn-primary btn_edit">编辑</button>
+        <button class="btn btn-xs btn-danger btn_del">删除</button>
+      </div>
+    </td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+<!-- 新增/编辑单选题 -->
+<div class="modal fade in" id="update_modal">
+  <form action="/lib/single_sel/update" method="post" class="form-horizontal validform">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h5 class="modal-title">新增/编辑模态框</h5>
+        </div>
+        <div class="clearfix"></div>
+        <div class="modal-body">
+          <input class="input_empty" type="hidden" name="_id" value="">
+          <div class="form-group">
+            <label class="col-xs-2 control-label label_name">问题</label>
+            <div class="col-xs-8">
+              <textarea class="form-control input_empty" name="question" datatype="*" nullmsg="请输入问题"></textarea>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-xs-2 control-label label_name">A</label>
+            <div class="col-xs-8">
+              <input class="form-control input_empty" name="A">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-xs-2 control-label label_name">B</label>
+            <div class="col-xs-8">
+              <input class="form-control input_empty" name="B">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-xs-2 control-label label_name">C</label>
+            <div class="col-xs-8">
+              <input class="form-control input_empty" name="C">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-xs-2 control-label label_name">D</label>
+            <div class="col-xs-8">
+              <input class="form-control input_empty" name="D">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-xs-2 control-label label_name">答案</label>
+            <div class="col-xs-8">
+              <select name="answer" class="form-control inline-block" style="width:150px;">
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+                <option value="D">D</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">
+            关闭
+            <span class="glyphicon glyphicon-off"></span>
+          </button>
+          <button type="submit" class="btn btn-primary">
+            保存
+            <span class="glyphicon glyphicon-floppy-disk"></span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript">
+'use strict';
+$(function() {
+  set_nav('lib_single_sel');
+
+  // 新增
+  $('.btn_add').on('click', function() {
+    var _form = $('#update_modal');
+    _form.find(".input_empty").val('');
+    _form.find(".Validform_checktip").val('');
+    _form.find("textarea[name='question']").attr("readonly", false);
+    _form.modal("show");
+  });
+  // 编辑
+  $('.btn_edit').on('click', function() {
+    var _id = $(this).parents('tr').attr('_id');
+    var _form = $('#update_modal');
+    _form.find("input[name='_id']").val(_id);
+    _form.find("textarea[name='question']").attr("readonly", true);
+    $.get('/lib/single_sel/one', {'_id': _id}, function(rs) {
+      if (rs.status) {
+        var single_sel = rs.single_sel;
+        _form.find("textarea[name='question']").val(single_sel.question);
+        _form.find("select[name='answer']").val(single_sel.answer);
+        _form.find("input[name='A']").val(single_sel.selection.A || '');
+        _form.find("input[name='B']").val(single_sel.selection.B || '');
+        _form.find("input[name='C']").val(single_sel.selection.C || '');
+        _form.find("input[name='D']").val(single_sel.selection.D || '');
+        _form.modal("show");
+      } else {
+        alert(rs.msg);
+      }
+    });
+  });
+  // 删除
+  $('.btn_del').on('click', function() {
+    var _id = $(this).parents('tr').attr('_id');
+    if (confirm("确认删除?")) {
+      $.post("/lib/single_sel/del", {'_id': _id}, function(rs) {
+        if (rs.status) {
+          location.href = "/lib/single_sel";
+        } else {
+          alert(rs.msg);
+        }
+      });
+    }
+  });
+
+  $('#search').on('click', function() {
+    var question = $('#search_question').val();
+    location.href = "/lib/single_sel?question=" + question;
+  });
+
+  //处理表单
+  $('.validform').Validform({
+    ajaxPost:true,
+    beforeSubmit:function(curform){},
+    callback:function(rs){
+      if (rs.status) {
+        location.reload();
+      } else {
+        alert(rs.msg);
+      }
+    },
+    tiptype:function(msg,o,cssctl){
+      var objtip=o.obj.next('.Validform_checktip');
+      if($(objtip).size()==0){
+        objtip = $('<label>').addClass('Validform_checktip');
+        o.obj.after(objtip)
+      }
+      if(!(o.type == 2)){
+        if(!o.obj.is("form")){//验证表单元素时o.obj为该表单元素，全部验证通过提交表单时o.obj为该表单对象;
+          objtip.text(msg).show();
+        }
+      }else{
+        o.obj.next('.Validform_checktip').hide();
+      }
+    }
+  });
+});
+</script>
+
+{% endblock %}

@@ -9,7 +9,7 @@ assert = require('assert');
 
 var routes = require('./routes/index');
 var students = require('./routes/admin/students');
-var single_sel = require('./routes/admin/single_sel');
+var single_sel = require('./routes/lib/single_sel');
 
 var app = express();
 
@@ -30,7 +30,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
 app.use('/admin/students', students);
-app.use('/admin/lib', single_sel);
+app.use('/lib/single_sel', single_sel);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

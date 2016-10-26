@@ -25,14 +25,14 @@ function Router(collection) {
   * 获取题库中所有的单选题
   * 前端可传递question
   * */
-  router.get('/single_sel', function(req, res) {
+  router.get('/', function(req, res) {
     var question = req.query.question,
       search_cond = {};
     if (question) search_cond['question'] = {'$regex': question};
 
     collection.find(search_cond).toArray()
       .then(function(single_sels) {
-        res.render('admin/single_sel.html', {single_sels: single_sels, question: question});
+        res.render('lib/single_sel.html', {single_sels: single_sels, question: question});
       })
       .catch(function(err) {
         res.send({status: false, msg: '获取题库中单选题失败!'});
@@ -42,7 +42,7 @@ function Router(collection) {
   /*
   * 获取单个单选题的信息
   * */
-  router.get('/single_sel/one', function(req, res) {
+  router.get('/one', function(req, res) {
     var _id = req.query._id;
     if ("" == _id) {
       res.send({status: false, msg: '所传递的_id不可为空!'});
@@ -61,7 +61,7 @@ function Router(collection) {
   /*
   * 删除单个单选题
   * */
-  router.post('/single_sel/del', function(req, res) {
+  router.post('/del', function(req, res) {
     var _id = req.body._id;
     if ("" == _id) {
       res.send({status: false, msg: '所传递的_id不可为空!'});
@@ -125,7 +125,7 @@ function Router(collection) {
 
     return {status: true, msg: '正确'};
   }
-  router.post('/single_sel/update', function(req, res) {
+  router.post('/update', function(req, res) {
     var _id = req.body._id,
       question = req.body.question.trim(),
       A = req.body.A.trim(),
@@ -165,3 +165,5 @@ function Router(collection) {
     }
   });
 }
+
+module.exports = router;
