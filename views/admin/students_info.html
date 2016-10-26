@@ -57,6 +57,7 @@
           <div class="btn-group">
             <button class="btn btn-xs btn-primary btn_edit">编辑</button>
             <button class="btn btn-xs btn-danger btn_del">删除</button>
+            <button class="btn btn-xs btn-success btn_addimg">上传头像</button>
           </div>
         </td>
       </tr>
@@ -125,6 +126,35 @@
   </form>
 </div>
 
+<!-- 上传头像 -->
+<div class="modal fade in" id="img_modal">
+  <form method="post" enctype="multipart/form-data" action="/admin/students/info/addimg" class="form-horizontal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">x</span></button>
+          <h5 class="modal-title">新增/编辑模态框</h5>
+        </div>
+        <div class="clearfix"></div>
+        <div class="modal-body">
+          <input type="hidden" name="_id" value="">
+          <input type="file" name="file">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">
+            关闭
+            <span class="glyphicon glyphicon-off"></span>
+          </button>
+          <button type="submit" class="btn btn-primary" id="btn_file_upload">
+            保存
+            <span class="glyphicon glyphicon-floppy-disk"></span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
 {% endblock %}
 
 {% block js %}
@@ -139,6 +169,13 @@ $(function() {
     $('#search_sex').val("{{sex}}");
   }
   init();
+  // 上传照片
+  $('.btn_addimg').on('click', function() {
+    var _id = $(this).parents('tr').attr('_id');
+    var _form = $('#img_modal');
+    _form.find("input[name='_id']").val(_id);
+    _form.modal('show');
+  });
   // 新增
   $('.btn_add').on('click', function() {
     var _form = $('#update_modal');

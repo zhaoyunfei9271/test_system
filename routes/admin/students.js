@@ -5,9 +5,14 @@
  */
 'use strict';
 
-var express = require('express');
-var router = express.Router();
-var mongo = require('mongodb');
+var express = require('express'),
+  router = express.Router(),
+  mongo = require('mongodb'),
+  fs = require('fs'),
+  path = require('path'),
+  multer = require('multer'),
+  upload = multer({dest: 'uploads/'});
+
 // 连接数据库
 var MongoClient = require('mongodb').MongoClient,
   url = 'mongodb://localhost:27017/test_system';
@@ -40,6 +45,35 @@ function Router(collection) {
       })
       .catch(function(err) {
         res.send({status: false, msg: '获取学生信息失败!'});
+      });
+  });
+
+  /*
+  * 上传学生个人头像
+  * */
+  router.post('/info/addimg', upload.single('file'), function(req, res) {
+    var _id = req.body._id;
+    if ("" == _id) {
+      res.send({status: false, msg: '所传递的学生_id不可为空!'});
+      return;
+    }
+    _id = new mongo.ObjectID(_id);
+    collection.findOne({_id: _id})
+      .then(function(student) {
+        var tempPath = req.file.path,
+          suffix_index = req.file.originalname.indexOf("."),
+          suffix = req.file.originalname.substring(suffix_index),
+          targetPath = path.resolve(req.file.destination + '/' + student.name + suffix);
+        fs.rename(tempPath, targetPath, function(err) {
+          if (err) {
+            res.send({status: false, msg: '上传照片失败!'});
+          } else {
+            res.send({status: true, msg: '上传照片成功!'});
+          }
+        });
+      })
+      .catch(function(err) {
+        res.send({status: false, msg: '查询数据库有误!'});
       });
   });
 
