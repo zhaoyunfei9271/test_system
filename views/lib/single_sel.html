@@ -144,6 +144,11 @@
 'use strict';
 $(function() {
   set_nav('lib_single_sel');
+  // 初始化
+  function init() {
+    $('#search_question').val("{{question}}");
+  }
+  init();
 
   // 新增
   $('.btn_add').on('click', function() {
