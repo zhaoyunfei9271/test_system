@@ -11,7 +11,7 @@ var express = require('express'),
   fs = require('fs'),
   path = require('path'),
   multer = require('multer'),
-  upload = multer({dest: 'uploads/'});
+  upload = multer({dest: 'public/uploads/'});
 
 // 连接数据库
 var MongoClient = require('mongodb').MongoClient,
@@ -68,6 +68,11 @@ function Router(collection) {
           if (err) {
             res.send({status: false, msg: '上传照片失败!'});
           } else {
+            collection.update({_id: _id}, {$set: {pic: student.name + suffix}})
+              .then(function() {})
+              .catch(function(err) {
+                res.send({status: true, msg: '更新用户头像失败!'});
+              });
             res.send({status: true, msg: '上传照片成功!'});
           }
         });
@@ -176,7 +181,7 @@ function Router(collection) {
           res.send({status: false, msg: '新增失败!'});
         });
     } else {
-      collection.update({_id: _id}, {name: name, age: age, grade: grade, sex: sex, email: email})
+      collection.update({_id: _id}, {$set: {name: name, age: age, grade: grade, sex: sex, email: email}})
         .then(function() {
           res.send({status: true, msg: '编辑成功!'});
         })
