@@ -1,0 +1,413 @@
+{% extends "../admin/admin_base.html" %}
+
+{% block style %}
+<link href="/fight/css/wrapper.css" rel="stylesheet">
+<style type="text/css">
+  /*
+  * 选中的战斗学生部分
+  */
+  .sel_wrapper_students {
+    margin: 20px auto;
+    position: relative;
+    border: 10px solid #fff;
+    border-radius: 5px;
+    box-shadow: 0 0 2px;
+  }
+  .sel_all_students {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+  }
+  /*
+  * 定时器 + 问题解答部分
+  */
+  .fight_modal {
+    padding: 0px 20px 0px 20px;
+    margin: auto;
+  }
+  .fight_modal_timer {
+    position: relative;
+    padding: 0px 5px 0px 5px;
+    width: 35%;
+    display: inline-block;
+  }
+  .fight_modal_qa {
+    position: absolute;
+    padding: 0px 5px 0px 5px;
+    width: 65%;
+    display: inline-block;
+  }
+  /*
+  * 定时器部分
+  */
+  #clockdiv {
+    padding: 10px 0px 10px 0px;
+    font-family: sans-serif;
+    color: #fff;
+    display: inline-block;
+    font-weight: 100;
+    text-align: center;
+    font-size: 20px;
+  }
+  #clockdiv > div {
+    padding: 10px;
+    border-radius: 3px;
+    background: #00BF96;
+    display: inline-block;
+  }
+  #clockdiv div > input {
+    padding: 12px;
+    border-radius: 3px;
+    background: #00816A;
+    display: inline-block;
+    width: 55px;
+    height: 55px;
+  }
+  .smalltext {
+    padding-top: 5px;
+    font-size: 16px;
+  }
+  /*
+  * 问题解答部分
+  */
+  .fight_modal_selection {
+    padding: 0px 10px 0px 0px;
+    display: inline-block;
+  }
+  .fight_modal_answer {
+    display: inline-block;
+  }
+  .question,.selection,.answer{
+    background-color: #3f3f3f;
+    display: block;
+  }
+  .question > p,.selection > p,.answer > p {
+    font-size: 30px;
+    color: #dcdcdc;
+  }
+
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="proset_breadcrumb">
+  <h5>单选题挑战赛</h5>
+</div>
+
+<div class="wrapper">
+  <h1>参加单选题挑战赛的战斗学生们</h1>
+  <div class="wrapper_students">
+    <div class="all_students">
+      <ul>
+        {% for s in students %}
+          {% if s.pic %}
+          <li class="give_student_{{s.get('name', '')}}" style="display:inline-block">
+            <img src="/uploads/{{s.pic}}" class="img-circle sel_student" name="{{s.name}}" style="height: 100px; width: 100px;" />
+          </li>
+          {% endif %}
+        {% endfor %}
+      </ul>
+    </div>
+    <a href="#" class="control-prev">&lsaquo;</a>
+    <a href="#" class="control-next">&rsaquo;</a>
+    <p class="jcarousel-pagination"></p>
+  </div>
+</div>
+
+<div class="wrapper">
+  <h1>被选中的战斗学生</h1>
+  <div class="sel_wrapper_students">
+    <div class="sel_all_students">
+      <ul>
+        {% for s in students %}
+          {% if s.pic %}
+          <li class="sel_student_{{s.name}}" style="display:none; width: 120px;">
+            <img src="/uploads/{{s.pic}}" class="img-circle give_student" name="{{s.name}}" style="height: 100px; width: 100px;" />
+            <div style="display:block">
+              <button class="btn btn-small btn-primary answer_right" student="{{s._id}}" type="button">答对</button>
+              <button class="btn btn-small btn-warning answer_wrong" student="{{s._id}}" type="button">答错</button>
+            </div>
+          </li>
+          {% endif %}
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+<div class="fight_modal">
+  <div class="fight_modal_timer">
+    <div class="form-inline">
+      <label style="font-size: 24px; font-weight: bold; color: #4E443C;">邪恶的定时器</label>
+      <button type="button" class="btn btn-success start_btn" id="start">开始战斗</button>
+    </div>
+    <div id="clockdiv">
+      <div>
+        <input class="hours">
+        <div class="smalltext">Hours</div>
+      </div>
+      <div>
+        <input class="minutes">
+        <div class="smalltext">Minutes</div>
+      </div>
+      <div>
+        <input class="seconds">
+        <div class="smalltext">Seconds</div>
+      </div>
+    </div>
+    <div class="form-inline">
+      <button type="button" class="btn btn-danger end_btn" id="end" disabled="disabled">清空定时器</button>
+      <button type="button" class="btn btn-primary next_btn" id="next" disabled="disabled">下一题</button>
+    </div>
+    <div id="myDiv" style="width: 100%; height: 300px;">
+    </div>
+  </div>
+  <div class="fight_modal_qa">
+    <input type="hidden" id="single_sel_id" value="">
+    <div class="fight_modal_question">
+      <label style="font-size: 24px; font-weight: bold; color: #4E443C;">单选题问题</label>
+      <div class="question">
+      </div>
+    </div>
+    <div>
+      <div class="fight_modal_selection">
+        <label style="font-size: 24px; font-weight: bold; color: #4E443C;">单选题选项</label>
+        <div class="selection">
+        </div>
+      </div>
+      <div class="fight_modal_answer">
+        <div class="form-inline">
+          <label style="font-size: 24px; font-weight: bold; color: #4E443C;">单选题答案</label>
+          <button type="button" class="btn btn-primary result_btn" id="result">查看</button>
+        </div>
+        <div class="answer">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block js%}
+<script src="/javascripts/plotly.min.js"></script>
+<script src="/fight/js/wrapper.js"></script>
+<script type="text/javascript">
+  $(function() {
+    set_nav('fight_single_sel');
+
+    // 选择要参与挑战赛的学生
+    $('.sel_student').on('click', function() {
+      var name = $(this).attr('name');
+      $('.sel_student_' + name)[0].style.display = 'inline-block';
+      $(this).parents('li').css('background-color', 'green');
+    });
+    // 取消已选择的学生
+    $('.give_student').on('click', function() {
+      var name = $(this).attr('name');
+      $(this).parents('li')[0].style.display = 'none';
+      $('.give_student_' + name).css('background-color', '');
+    });
+
+    // 检查时间是否有误
+    function checkTime(hours, minutes, seconds) {
+      var total = 0;
+      if (hours) {
+        hours = parseInt(hours);
+        if (isNaN(hours) || hours < 0 || hours > 23) {
+          alert("are you kidding me? the hours should between 0 and 24!");
+          return;
+        }
+        total += parseInt(hours) * 60 * 60 * 1000;
+      }
+      if (minutes) {
+        minutes = parseInt(minutes);
+        if (isNaN(minutes) || minutes < 0 || minutes >59) {
+          alert("are you kidding me? the minutes should between 0 and 60!");
+          return;
+        }
+        total += parseInt(minutes) * 60 * 1000;
+      }
+      if (seconds) {
+        seconds = parseInt(seconds);
+        if (isNaN(seconds) || seconds < 0 || seconds > 59) {
+          alert("are you kidding me? the seconds should between 0 and 60!");
+          return;
+        }
+        total += parseInt(seconds) * 1000;
+      }
+      return total;
+    }
+    // 开启定时器后, 操作按钮是否有效的设置
+    function start_on() {
+      $('.hours').attr('readonly', true);
+      $('.minutes').attr('readonly', true);
+      $('.seconds').attr('readonly', true);
+      $('#start').attr('disabled', true);
+      $('#end').attr('disabled', false);
+      $('#next').attr('disabled', false);
+    }
+    // 点击清空定时器后, 操作按钮是否有效的设置
+    var timeinterval;
+    function end_on() {
+      $('.hours').attr('readonly', false);
+      $('.minutes').attr('readonly', false);
+      $('.seconds').attr('readonly', false);
+      $('#start').attr('disabled', false);
+      $('#end').attr('disabled', true);
+      $('#next').attr('disabled', true);
+      $('.hours').val('0');
+      $('.minutes').val('0');
+      $('.seconds').val('0');
+      clearInterval(timeinterval);
+    }
+    // 获取下一题
+    function next_question() {
+      $.post('/fight/single_sel/one', function(rs) {
+        if (rs.status) {
+          var one_single_sel = rs.one_single_sel;
+          var p = "<p style='white-space: pre-line'>" + one_single_sel.question + "</p>";
+          $('.question').html(p);
+          var A = one_single_sel.selection.A;
+          var B = one_single_sel.selection.B;
+          var C = one_single_sel.selection.C;
+          var D = one_single_sel.selection.D;
+          p = "<p style='white-space: pre-line'>";
+          if (A) p += "A:" + A;
+          if (B) p += "  B:" + B;
+          if (C) p += "  C:" + C;
+          if (D) p += "  D:" + D;
+          p += "</p>";
+          $('.selection').html(p);
+          p = "<p style='white-space: pre-line' class='hide'>" + one_single_sel.answer + "</p>";
+          $('.answer').html(p);
+
+          $('#single_sel_id').val(one_single_sel._id);
+        } else {
+          alert(rs.msg);
+        }
+      });
+    }
+    // 插入单选题挑战记录
+    var _id = null;
+    function insert_record(limit_time) {
+      $.post('/fight/single_sel/update', {'limit_time': limit_time}, function(rs) {
+        _id = rs._id;
+      });
+    }
+    // 开启定时器
+    $('#start').on('click', function() {
+      var hours = $('.hours').val();
+      var minutes = $('.minutes').val();
+      var seconds = $('.seconds').val();
+      var total = checkTime(hours, minutes, seconds);
+      insert_record(total / 1000);
+      start_on();
+      initializeClock(new Date(Date.parse(new Date()) + total));
+
+      $('.answer_right').attr('disabled', false);
+      $('.answer_wrong').attr('disabled', false);
+      // 获取题目
+      next_question();
+    });
+    function getTimeRemaining(endtime) {
+      var t = Date.parse(endtime) - Date.parse(new Date());
+      var seconds = Math.floor((t / 1000) % 60);
+      var minutes = Math.floor((t / 1000 / 60) % 60);
+      var hours = Math.floor((t / (1000 * 60 * 60)) % 24);
+      return {
+        'total': t,
+        'hours': hours,
+        'minutes': minutes,
+        'seconds': seconds
+      };
+    }
+    function initializeClock(endtime) {
+      function updateClock() {
+        var t = getTimeRemaining(endtime);
+        $('.hours').val(('0' + t.hours).slice(-2));
+        $('.minutes').val(('0' + t.minutes).slice(-2));
+        $('.seconds').val(('0' + t.seconds).slice(-2));
+        if (t.total <= 0) {
+          clearInterval(timeinterval);
+          $('.hours').attr('readonly', false);
+          $('.minutes').attr('readonly', false);
+          $('.seconds').attr('readonly', false);
+        }
+      }
+      updateClock();
+      timeinterval = setInterval(updateClock, 1000);
+    }
+
+    // 清空定时器
+    $('#end').on('click', function() {
+      end_on();
+    });
+    // 下一题
+    $('#next').on('click', function() {
+      $('.answer_right').attr('disabled', false);
+      $('.answer_wrong').attr('disabled', false);
+      next_question();
+    });
+    // 查看正确答案
+    $('#result').on('click', function() {
+      $('.answer').find("p").removeClass('hide');
+    });
+    // 答对
+    $('.answer_right').on('click', function() {
+      // 防止重复点击
+      $(this).attr('disabled', true);
+      var student = $(this).attr('student');
+      var single_sel = $('#single_sel_id').val();
+      if (_id) {
+        $.post('/fight/single_sel/update', {'_id': _id, 'student': student, 'right': 1, 'single_sel': single_sel}, function(rs) {
+          draw(_id);
+        });
+      }
+    });
+    // 答错
+    $('.answer_wrong').on('click', function() {
+      // 防止重复点击
+      $(this).attr('disabled', true);
+      var student = $(this).attr('student');
+      var single_sel = $('#single_sel_id').val();
+      if (_id) {
+        $.post('/fight/single_sel/update', {'_id': _id, 'student': student, 'wrong': 1, 'single_sel': single_sel}, function(rs) {
+          draw(_id);
+        });
+      }
+    });
+    // 绘图
+    function draw(_id) {
+      $.get('/fight/single_sel/info', {'_id': _id}, function(rs) {
+        var record = rs.record;
+        var right = [];
+        var wrong = [];
+        var name = [];
+        for (var i = 0; i < record.length; i++) {
+          right.push(record[i].right);
+          wrong.push(record[i].wrong);
+          name.push(record[i].name);
+        }
+        var right_data = {
+          x: name,
+          y: right,
+          name: 'right',
+          type: 'bar'
+        };
+        var wrong_data = {
+          x: name,
+          y: wrong,
+          name: 'wrong',
+          type: 'bar'
+        };
+        var data = [right_data, wrong_data];
+        var layout = {barmode: 'group'};
+        Plotly.newPlot('myDiv', data, layout);
+      });
+    }
+
+  });
+</script>
+{% endblock %}
