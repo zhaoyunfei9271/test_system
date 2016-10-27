@@ -101,7 +101,7 @@
       <ul>
         {% for s in students %}
           {% if s.pic %}
-          <li class="give_student_{{s.get('name', '')}}" style="display:inline-block">
+          <li class="give_student_{{s.name}}" style="display:inline-block">
             <img src="/uploads/{{s.pic}}" class="img-circle sel_student" name="{{s.name}}" style="height: 100px; width: 100px;" />
           </li>
           {% endif %}
@@ -283,7 +283,7 @@
           p = "<p style='white-space: pre-line' class='hide'>" + one_single_sel.answer + "</p>";
           $('.answer').html(p);
 
-          $('#single_sel_id').val(one_single_sel._id);
+          $('#single_sel_id').val(one_single_sel._id.toString());
         } else {
           alert(rs.msg);
         }
@@ -293,7 +293,7 @@
     var _id = null;
     function insert_record(limit_time) {
       $.post('/fight/single_sel/update', {'limit_time': limit_time}, function(rs) {
-        _id = rs._id;
+        _id = rs._id.toString();
       });
     }
     // 开启定时器
@@ -334,6 +334,7 @@
           $('.hours').attr('readonly', false);
           $('.minutes').attr('readonly', false);
           $('.seconds').attr('readonly', false);
+          end_on();
         }
       }
       updateClock();
