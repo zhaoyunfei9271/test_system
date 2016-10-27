@@ -36,36 +36,34 @@ function Router(db) {
 
   /*
   * 获取单个未选中的单选题
+  * check='1'代表此单选题已经被选过; 如果全部单选题都被选中过, 则设置所有单选题中check=''
   * */
   router.post('/one', function(req, res) {
     var collection = db.collection('single_sel');
     collection.findOne({check: {'$ne': '1'}})
       .then(function(one_single_sel) {
-        if (!one_single_sel) {
-          collection.update({}, {$set: {check: ''}})
-            .then(function() {
-              collection.findOne({check: {'$ne': '1'}})
-                .then(function(new_one_single_sel) {
-                  one_single_sel = new_one_single_sel;
-                })
-                .catch(function(err) {
-                  res.send({status: false, msg: '查询数据库有误!'});
-                });
-            })
-            .catch(function(err) {
-              res.send({status: false, msg: '更新数据库有误!'});
-            });
-        }
-        var _id = one_single_sel._id;
-        collection.update({_id: _id}, {$set: {check: '1'}})
+        collection.findOneAndUpdate({_id: one_single_sel._id}, {$set: {check: '1'}})
           .then(function() {})
-          .catch(function(err) {
-            res.send({status: false, msg: '更新数据库有误!'});
-          });
+          .catch(function() {});
         res.send({status: true, one_single_sel: one_single_sel});
       })
       .catch(function(err) {
-        res.send({status: false, msg: '查询数据库有误!'});
+        collection.updateMany({}, {$set: {check: ''}})
+          .then(function() {
+            collection.findOne({check: {'$ne': '1'}})
+              .then(function(one_single_sel) {
+                collection.findOneAndUpdate({_id: one_single_sel._id}, {$set: {check: '1'}})
+                  .then(function() {})
+                  .catch(function() {});
+                res.send({status: true, one_single_sel: one_single_sel});
+              })
+              .catch(function(err) {
+                res.send({status: false, msg: '查询数据库有误!'});
+              });
+          })
+          .catch(function(err) {
+            res.send({status: false, msg: '更新数据库有误!'});
+          });
       });
   });
 
@@ -89,13 +87,12 @@ function Router(db) {
         res.send({status: false, msg: '所传递的定时时间有误!'});
         return;
       }
-      collection.insert({ts: ts, addon: addon, limit_time: limit_time})
+      collection.insertOne({ts: ts, addon: addon, limit_time: limit_time})
         .then(function(r) {
-          _id = r._id;
+          res.send({status: true, _id: r.insertedId});
         })
         .catch(function(err) {
           res.send({status: false, msg: '新增挑战记录失败!'});
-          return;
         });
     } else {
       if (!student) {
@@ -145,8 +142,6 @@ function Router(db) {
           });
       }
     }
-
-    res.send({status: true, _id: _id});
   });
 
   /*

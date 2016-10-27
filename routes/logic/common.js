@@ -11,9 +11,10 @@ var logic_func = {
       }
       return num;
     }
-    var time = new Date(time);
     if (String(time).length == 10) {
       time = new Date(time * 1000);
+    } else {
+      time = new Date(time);
     }
     var year = time.getFullYear();
     var month = time.getMonth() + 1;
