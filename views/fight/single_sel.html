@@ -124,8 +124,8 @@
           <li class="sel_student_{{s.name}}" style="display:none; width: 120px;">
             <img src="/uploads/{{s.pic}}" class="img-circle give_student" name="{{s.name}}" style="height: 100px; width: 100px;" />
             <div style="display:block">
-              <button class="btn btn-small btn-primary answer_right" student="{{s._id}}" type="button">答对</button>
-              <button class="btn btn-small btn-warning answer_wrong" student="{{s._id}}" type="button">答错</button>
+              <button class="btn btn-small btn-primary answer_right" student="{{s._id.toString()}}" type="button">答对</button>
+              <button class="btn btn-small btn-warning answer_wrong" student="{{s._id.toString()}}" type="button">答错</button>
             </div>
           </li>
           {% endif %}

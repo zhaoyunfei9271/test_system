@@ -134,22 +134,29 @@ function Router(db) {
               });
           }
         })
+        .then(function() {
+          if (single_sel) {
+            collection.findOne({_id: new mongo.ObjectID(_id)})
+              .then(function(one_fight_single_sel) {
+                var single_sels = one_fight_single_sel.single_sels || [];
+                single_sels.push(single_sel);
+                var filter_single_sels = single_sels.filter(function(item, pos) {
+                  return single_sels.indexOf(item) == pos;
+                });
+                collection.update({_id: new mongo.ObjectID(_id)}, {$set: {single_sels: filter_single_sels}})
+                  .then(function () {
+                    res.send({status: true, msg: '更新单选题成功!'});
+                  })
+                  .catch(function(err) {});
+              })
+              .catch(function(err) {
+                res.send({status: false, msg: '更新单选题失败!'});
+              });
+          }
+        })
         .catch(function(err) {
           res.send({status: false, msg: '查询学生挑战记录失败!'});
         });
-      if (single_sel) {
-        collection.findOne({_id: new mongo.ObjectID(_id)})
-          .then(function(one_fight_single_sel) {
-            var single_sels = one_fight_single_sel.single_sels || [];
-            single_sels.push(single_sel);
-            var filter_single_sels = single_sels.filter(function(item, pos) {
-              return single_sels.indexOf(item) == pos;
-            });
-            collection.update({_id: new mongo.ObjectID(_id)}, {$set: {single_sels: filter_single_sels}})
-              .then(function () {})
-              .catch(function(err) {});
-          });
-      }
     }
   });
 
@@ -164,7 +171,7 @@ function Router(db) {
     }
     _id = new mongo.ObjectID(_id);
     var fight_col = db.collection('fight_single_sel'),
-      student_col = db.collection('student');
+      student_col = db.collection('students');
     fight_col.findOne({_id: _id})
       .then(function(fight_single_sel) {
         var record = fight_single_sel.record || [];
@@ -175,12 +182,13 @@ function Router(db) {
               students_id_name[students[i]._id.toString()] = students[i].name;
             }
             for (var i = 0; i < record.length; i++) {
-              record[i].name = students_id_name[r.student];
+              record[i].name = students_id_name[record[i].student];
             }
             res.send({status: true, record: record});
           })
           .catch(function(err) {});
-      });
+      })
+      .catch(function(err) {});
   });
 }
 
