@@ -11,6 +11,7 @@ var routes = require('./routes/index');
 var students = require('./routes/admin/students');
 var lib_single_sel = require('./routes/lib/single_sel');
 var fight_single_sel = require('./routes/fight/single_sel');
+var record_single_sel = require('./routes/record/single_sel');
 
 var app = express();
 
@@ -33,6 +34,7 @@ app.use('/', routes);
 app.use('/admin/students', students);
 app.use('/lib/single_sel', lib_single_sel);
 app.use('/fight/single_sel', fight_single_sel);
+app.use('/record/single_sel', record_single_sel);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

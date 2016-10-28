@@ -1,0 +1,180 @@
+{% extends "../admin/admin_base.html" %}
+
+{% block style %}
+<style type="text/css">
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="proset_breadcrumb">
+  <h5>单选题挑战记录</h5>
+</div>
+
+<table class="table table-bordered table-hover">
+  <thead>
+  <tr>
+    <th width="50px" class="text-center">
+      <input type="checkbox" class="outerCheck">
+    </th>
+    <th>挑战时间</th>
+    <th>限时</th>
+    <th>所出单选题</th>
+    <th>学生挑战记录</th>
+    <th>操作</th>
+  </tr>
+  </thead>
+  <tbody>
+  {% for item in records %}
+  <tr _id="{{item._id.toString()}}">
+    <td width="50px" class="text-center">
+      <input type="checkbox" class="CheckBox">
+    </td>
+    <td>{{item.addon}}</td>
+    <td>{{item.limit_time}}(秒)</td>
+    <td><a href="#" class="all_single_sel">查看</a></td>
+    <td>
+      {% for s in item.record %}
+      <b>姓名:</b>{{students_id_name[s.student]}}&nbsp;<b>正确数:</b>{{s.right}}&nbsp;<b>错误数:</b>{{s.wrong}}<br />
+      {% endfor %}
+    </td>
+    <td width="150px;" class="operate">
+      <div class="btn-group">
+        <button class="btn btn-xs btn-primary btn_draw">查看</button>
+        <button class="btn btn-xs btn-danger btn_del">删除</button>
+      </div>
+    </td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+<!-- 查看所出的单选题 -->
+<div class="modal fade in" id="single_sels_modal">
+  <form class="form-horizontal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h5 class="modal-title">查看挑战记录</h5>
+        </div>
+        <table class="table table-bordered table-hover">
+          <thead>
+          <tr>
+            <th>问题</th>
+            <th>选项</th>
+            <th>答案</th>
+          </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </form>
+</div>
+
+<!-- 查看挑战记录 -->
+<div class="modal fade in" id="draw_modal">
+  <form class="form-horizontal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h5 class="modal-title">查看挑战记录</h5>
+        </div>
+        <div id="myDiv" style="width: 600px; height: 300px;"></div>
+      </div>
+    </div>
+  </form>
+</div>
+
+{% endblock %}
+
+{% block js %}
+<script src="/javascripts/plotly.min.js"></script>
+<script type="text/javascript">
+  $(function() {
+    set_nav('record_single_sel');
+
+    // 查看
+    $('.all_single_sel').on('click', function() {
+      var _id = $(this).parents('tr').attr('_id');
+      $.get('/record/single_sel/info', {'_id': _id}, function(rs) {
+        if (rs.status) {
+          var single_sels = rs.single_sels;
+          var _tbody = $('#single_sels_modal').find('tbody');
+          for (var i = 0; i < single_sels.length; i++) {
+            var tr = "<tr>";
+            tr += "<td style='white-space: pre-line'>" + single_sels[i].question + "</td>";
+            tr += "<td>";
+            var selection = single_sels[i].selection;
+            if (selection.hasOwnProperty('A')) {
+              tr += "<b>A</b>." + selection.A + "  ";
+            }
+            if (selection.hasOwnProperty('B')) {
+              tr += "<b>B</b>." + selection.B + "  ";
+            }
+            if (selection.hasOwnProperty('C')) {
+              tr += "<b>C</b>." + selection.C + "  ";
+            }
+            if (selection.hasOwnProperty('D')) {
+              tr += "<b>D</b>." + selection.D + "  ";
+            }
+            tr += "</td>";
+            tr += "<td>" + single_sels[i].answer + "</td>";
+            tr += "</tr>";
+            _tbody.append(tr);
+          }
+          $('#single_sels_modal').modal("show");
+        }
+      });
+    });
+    // 删除
+    $('.btn_del').on('click', function() {
+      var _id = $(this).parents('tr').attr('_id');
+      if (confirm('确认删除?')) {
+        $.post('/record/single_sel/del', {'_id': _id}, function(rs) {
+          if (rs.status) {
+            location.href = "/record/single_sel";
+          } else {
+            alert(rs.msg);
+          }
+        });
+      }
+    });
+    // 绘图
+    $('.btn_draw').on('click', function() {
+      var _id = $(this).parents('tr').attr('_id');
+      $.get('/fight/single_sel/info', {'_id': _id}, function(rs) {
+        var record = rs.record;
+        var right = [];
+        var wrong = [];
+        var name = [];
+        for (var i = 0; i < record.length; i++) {
+          right.push(record[i].right);
+          wrong.push(record[i].wrong);
+          name.push(record[i].name);
+        }
+        var right_data = {
+          x: name,
+          y: right,
+          name: 'right',
+          type: 'bar'
+        };
+        var wrong_data = {
+          x: name,
+          y: wrong,
+          name: 'wrong',
+          type: 'bar'
+        };
+        var data = [right_data, wrong_data];
+        var layout = {barmode: 'group'};
+        Plotly.newPlot('myDiv', data, layout);
+        $('#draw_modal').modal("show");
+      });
+    });
+
+  });
+</script>
+
+{% endblock %}
