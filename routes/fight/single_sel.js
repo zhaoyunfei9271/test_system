@@ -105,7 +105,9 @@ function Router(db) {
             collection.update({_id: new mongo.ObjectID(_id)},
               {'$addToSet': {record: {student: student, right: right, wrong: wrong}}})
               .then(function() {})
-              .catch(function(err) {});
+              .catch(function(err) {
+                res.send({status: false, msg: '更新挑战记录失败!'});
+              });
           } else {
             collection.findOne({_id: new mongo.ObjectID(_id)})
               .then(function(_fight_single_sel) {
@@ -119,24 +121,31 @@ function Router(db) {
                     break;
                   }
                 }
-                db.update({_id: new mongo.ObjectID(_id), 'record.student': student},
+                collection.update({_id: new mongo.ObjectID(_id), 'record.student': student},
                   {$set: {'record.$.right': right + _right, 'record.$.wrong': wrong + _wrong}})
-                  .then(function() {})
-                  .catch(function(err) {});
+                  .then(function() {
+                  })
+                  .catch(function(err) {
+                    res.send({status: false, msg: '更新学生挑战记录失败!'});
+                  });
               })
-              .catch(function(err) {});
+              .catch(function(err) {
+                res.send({status: false, msg: '查询挑战记录失败!'});
+              });
           }
         })
-        .catch(function(err) {});
+        .catch(function(err) {
+          res.send({status: false, msg: '查询学生挑战记录失败!'});
+        });
       if (single_sel) {
-        db.findOne({_id: new mongo.ObjectID(_id)})
+        collection.findOne({_id: new mongo.ObjectID(_id)})
           .then(function(one_fight_single_sel) {
-            var single_sels = one_fight_single_sel.single_sels;
+            var single_sels = one_fight_single_sel.single_sels || [];
             single_sels.push(single_sel);
             var filter_single_sels = single_sels.filter(function(item, pos) {
               return single_sels.indexOf(item) == pos;
             });
-            collection.update({_id: new mongo.ObjectID(_id)}, {single_sels: filter_single_sels})
+            collection.update({_id: new mongo.ObjectID(_id)}, {$set: {single_sels: filter_single_sels}})
               .then(function () {})
               .catch(function(err) {});
           });
