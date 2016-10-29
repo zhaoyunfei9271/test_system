@@ -219,7 +219,7 @@
       }
     });
     //点击全选按钮,给行加success,input加checked
-    $('.outerCheck').click(function(){
+    $('.outerCheck').on('click', function(){
       $("input.CheckBox").prop('checked', $('.outerCheck').prop("checked"));
       if ($('.outerCheck').prop("checked")) {
         $('.pen').css('display','block');

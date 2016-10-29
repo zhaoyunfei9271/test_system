@@ -90,7 +90,7 @@ function Router(db) {
   * */
   router.get('/batch_single_sel', function(req, res) {
     var _ids = req.query._ids,
-      fight_col = db.collection('fight_single_col'),
+      fight_col = db.collection('fight_single_sel'),
       students_col = db.collection('students');
     if ("" == _ids) {
       res.send({status: false, msg: '所传递的_ids不可为空1'});
@@ -103,7 +103,7 @@ function Router(db) {
     }
     var name = [],
       records_ts = [];
-    students_col.find({}).toArray()
+    students_col.find({_id: {'$in': _Objectids}}).toArray()
       .then(function(students) {
         for (var i = 0; i < students.length; i++) {
           name.push(students[i].name);
@@ -125,6 +125,7 @@ function Router(db) {
                   wrong += r.wrong || 0;
                 }
               }
+
               if (right && wrong) {
                 records_ts.push({ts: ts, addon: addon, right: right, wrong: wrong});
               }
