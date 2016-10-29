@@ -140,6 +140,32 @@ function Router(db) {
         res.send({status: false, msg: '查询学生信息有误!'});
       });
   });
+
+  /*
+  * 产生模拟的单选题挑战记录
+  * 前端传递需要模拟的学生id即可
+  * */
+  router.post('/joke', function(req, res) {
+    var _ids = req.body._ids,
+      ts = Date.parse(new Date()) / 1000,
+      collection = db.collection('fight_single_sel');
+    if ("" == _ids) {
+      res.send({status: false, msg: '所传递的_ids不可为空1'});
+      return;
+    }
+    _ids = _ids.split(',');
+    for (var i = 0; i < 10; i++) {
+      var record = [];
+      for (var j = 0; j < _ids.length; j++) {
+        var r = parseInt(Math.random() * (20 - 10) + 10);
+        record.push({student: _ids[j], right: r, wrong: 20 - r});
+      }
+      collection.insertOne({ts: ts + i * (60 * 60 * 2), addon: logic_func.time_format(ts + i * (60 * 60 * 2)),
+        limit_time: 300, record: record})
+        .then(function() {})
+        .catch(function(err) {})
+    }
+  });
 }
 
 module.exports = router;

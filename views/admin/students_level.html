@@ -29,6 +29,7 @@
     </div>
     <button type="button" id="search" class="btn btn-success btn-sm"><i class="icon-search"></i>查询</button>
     <div class="btn-group pull-right" >
+      <a class="btn btn-sm btn-primary btn_batch_joke"><i class="icon-trash"></i>批量生成单选题挑战记录</a>
       <a class="btn btn-sm btn-success btn_batch_single_sel"><i class="icon-trash"></i>批量查看单选题挑战记录</a>
     </div>
   </div>
@@ -246,11 +247,18 @@
       var _ids = get_batch_ids();
       console.log(_ids);
       if (_ids.length > 0) {
-        $.get('/admin/students/level/batch_single_sel', {'_ids': "" + _ids}, function(rs) {
+        $.get('/admin/students/level/batch_single_sel', {_ids: "" + _ids}, function(rs) {
           if (rs.status) {
             single_sel_draw(rs);
           }
         });
+      }
+    });
+    // 批量生成单选题挑战记录
+    $('.btn_batch_joke').on('click', function() {
+      var _ids = get_batch_ids();
+      if (_ids.length > 0) {
+        $.post('/admin/students/level/joke', {_ids: "" + _ids}, function(rs) {});
       }
     });
   });
