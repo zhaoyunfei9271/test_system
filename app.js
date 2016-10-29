@@ -9,6 +9,7 @@ assert = require('assert');
 
 var routes = require('./routes/index');
 var students = require('./routes/admin/students');
+var students_level = require('./routes/admin/students_level');
 var lib_single_sel = require('./routes/lib/single_sel');
 var fight_single_sel = require('./routes/fight/single_sel');
 var record_single_sel = require('./routes/record/single_sel');
@@ -32,6 +33,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
 app.use('/admin/students', students);
+app.use('/admin/students/level', students_level);
 app.use('/lib/single_sel', lib_single_sel);
 app.use('/fight/single_sel', fight_single_sel);
 app.use('/record/single_sel', record_single_sel);
