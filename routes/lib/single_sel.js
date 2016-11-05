@@ -48,7 +48,12 @@ function Router(collection) {
       res.send({status: false, msg: '所传递的_id不可为空!'});
       return;
     }
-    _id = new mongo.ObjectID(_id);
+    try {
+      _id = new mongo.ObjectID(_id);
+    } catch (e) {
+      res.send({status: false, msg: '所传递的_id不符合数据库的_id!'});
+      return;
+    }
     collection.findOne({_id: _id})
       .then(function(single_sel) {
         res.send({status: true, single_sel: single_sel});
@@ -67,7 +72,12 @@ function Router(collection) {
       res.send({status: false, msg: '所传递的_id不可为空!'});
       return;
     }
-    _id = new mongo.ObjectID(_id);
+    try {
+      _id = new mongo.ObjectID(_id);
+    } catch (e) {
+      res.send({status: false, msg: '所传递的_id不符合数据库的_id!'});
+      return;
+    }
     collection.deleteOne({_id: _id})
       .then(function() {
         res.send({status: true, msg: '删除成功!'});
@@ -149,7 +159,14 @@ function Router(collection) {
       C = req.body.C.trim(),
       D = req.body.D.trim(),
       answer = req.body.answer;
-    if (_id) _id = new mongo.ObjectID(_id);
+    if (_id) {
+      try {
+        _id = new mongo.ObjectID(_id);
+      } catch (e) {
+        res.send({status: false, msg: '所传递的_id不符合数据库_id标准'});
+        return;
+      }
+    }
     result = check_info(_id, question, A, B, C, D, answer);
     if (!result.status) {
       res.send({status: false, msg: result.msg});
