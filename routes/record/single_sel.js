@@ -48,7 +48,7 @@ function Router(db) {
     var fight_col = db.collection('fight_single_sel'),
       single_sel_col = db.collection('single_sel'),
       _id = req.query._id;
-    if ("" == _id) {
+    if (!_id) {
       res.send({status: false, msg: '所传递的_id不可为空!'});
       return;
     }
@@ -77,7 +77,7 @@ function Router(db) {
   router.post('/del', function(req, res) {
     var _id = req.query._id,
       collection = db.collection('fight_single_sel');
-    if ("" == _id) {
+    if (!_id) {
       res.send({status: false, msg: '所传递的_id不可为空!'});
       return;
     }

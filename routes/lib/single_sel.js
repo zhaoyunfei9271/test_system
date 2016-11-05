@@ -44,7 +44,7 @@ function Router(collection) {
   * */
   router.get('/one', function(req, res) {
     var _id = req.query._id;
-    if ("" == _id) {
+    if (!_id) {
       res.send({status: false, msg: '所传递的_id不可为空!'});
       return;
     }
@@ -63,7 +63,7 @@ function Router(collection) {
   * */
   router.post('/del', function(req, res) {
     var _id = req.body._id;
-    if ("" == _id) {
+    if (!_id) {
       res.send({status: false, msg: '所传递的_id不可为空!'});
       return;
     }
@@ -125,7 +125,23 @@ function Router(collection) {
 
     return {status: true, msg: '正确'};
   }
+  // 测试req.body中必须传递的字段
+  function check_fields(body) {
+    // req.body中必须存在question, A, B, C, D
+    var fields = ['question', 'A', 'B', 'C', 'D'];
+    for (var i = 0; i < fields.length; i++) {
+      if (!body.hasOwnProperty(fields[i])) {
+        return {status: false, msg: '所传递的数据中没有' + fields[i] + '字段'};
+      }
+    }
+    return {status: true, msg: '数据正确'};
+  }
   router.post('/update', function(req, res) {
+    var result = check_fields(req.body);
+    if (!result.status) {
+      res.send({status: false, msg: result.msg});
+      return;
+    }
     var _id = req.body._id,
       question = req.body.question.trim(),
       A = req.body.A.trim(),
@@ -134,7 +150,7 @@ function Router(collection) {
       D = req.body.D.trim(),
       answer = req.body.answer;
     if (_id) _id = new mongo.ObjectID(_id);
-    var result = check_info(_id, question, A, B, C, D, answer);
+    result = check_info(_id, question, A, B, C, D, answer);
     if (!result.status) {
       res.send({status: false, msg: result.msg});
       return;

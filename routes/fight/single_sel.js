@@ -165,7 +165,7 @@ function Router(db) {
   * */
   router.get('/info', function(req, res) {
     var _id = req.query._id;
-    if ("" == _id) {
+    if (!_id) {
       res.send({status: false, msg: '所传递的_id不可为空!'});
       return;
     }

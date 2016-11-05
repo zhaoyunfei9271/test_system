@@ -92,7 +92,7 @@ function Router(db) {
     var _ids = req.query._ids,
       fight_col = db.collection('fight_single_sel'),
       students_col = db.collection('students');
-    if ("" == _ids) {
+    if (!_ids) {
       res.send({status: false, msg: '所传递的_ids不可为空1'});
       return;
     }
@@ -149,7 +149,7 @@ function Router(db) {
     var _ids = req.body._ids,
       ts = Date.parse(new Date()) / 1000,
       collection = db.collection('fight_single_sel');
-    if ("" == _ids) {
+    if (!_ids) {
       res.send({status: false, msg: '所传递的_ids不可为空1'});
       return;
     }
