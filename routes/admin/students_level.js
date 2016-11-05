@@ -53,6 +53,12 @@ function Router(db) {
     }
     var student = undefined;
     var records_ts = [];
+    try {
+      new mongo.ObjectID(_id);
+    } catch (e) {
+      res.send({status: false, msg: '所传递的_id不是数据库_id!'});
+      return;
+    }
     students_col.findOne({_id: new mongo.ObjectID(_id)})
       .then(function(_student) {
         student = _student;
@@ -98,8 +104,13 @@ function Router(db) {
     }
     _ids = _ids.split(',');
     var _Objectids = [];
-    for (var i = 0; i < _ids.length; i++) {
-      _Objectids.push(new mongo.ObjectID(_ids[i]));
+    try {
+      for (var i = 0; i < _ids.length; i++) {
+        _Objectids.push(new mongo.ObjectID(_ids[i]));
+      }
+    } catch (e) {
+      res.send({status: false, msg: '所传递的_ids不是数据库_id!'});
+      return;
     }
     var name = [],
       records_ts = [];
