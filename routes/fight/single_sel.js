@@ -99,6 +99,12 @@ function Router(db) {
         res.send({status: false, msg: '所传递的学生id不可为空!'});
         return;
       }
+      try {
+        new mongo.ObjectID(_id);
+      } catch (e) {
+        res.send({status: false, msg: '所传递的_id不是标准的数据库_id'});
+        return;
+      }
       collection.find({_id: new mongo.ObjectID(_id), 'record.student': student}).count()
         .then(function(count) {
           if (0 == count) {
@@ -169,7 +175,12 @@ function Router(db) {
       res.send({status: false, msg: '所传递的_id不可为空!'});
       return;
     }
-    _id = new mongo.ObjectID(_id);
+    try {
+      _id = new mongo.ObjectID(_id);
+    } catch (e) {
+      res.send({status: false, msg: '所传递的_id不是数据库的_id!'});
+      return;
+    }
     var fight_col = db.collection('fight_single_sel'),
       student_col = db.collection('students');
     fight_col.findOne({_id: _id})
