@@ -57,7 +57,12 @@ function Router(collection) {
       res.send({status: false, msg: '所传递的学生_id不可为空!'});
       return;
     }
-    _id = new mongo.ObjectID(_id);
+    try {
+      _id = new mongo.ObjectID(_id);
+    } catch (e) {
+      res.send({status: false, msg: '所传递的_id不是标准的数据库_id'});
+      return;
+    }
     collection.findOne({_id: _id})
       .then(function(student) {
         var tempPath = req.file.path,
@@ -91,7 +96,12 @@ function Router(collection) {
       res.send({status: false, msg: '所传递的_id不可为空!'});
       return;
     }
-    _id = new mongo.ObjectID(_id);
+    try {
+      _id = new mongo.ObjectID(_id);
+    } catch (e) {
+      res.send({status: false, msg: '所传递的_id不是标准的数据库_id'});
+      return;
+    }
     collection.findOne({_id: _id})
       .then(function(student) {
         res.send({status: true, student: student});
@@ -110,7 +120,12 @@ function Router(collection) {
       res.send({status: false, msg: '所传递的_id不可为空!'});
       return;
     }
-    _id = new mongo.ObjectID(_id);
+    try {
+      _id = new mongo.ObjectID(_id);
+    } catch (e) {
+      res.send({status: false, msg: '所传递的_id不是标准的数据库_id'});
+      return;
+    }
     collection.deleteOne({_id: _id})
       .then(function(){
         res.send({status: true, msg: '删除成功!'});
@@ -166,7 +181,14 @@ function Router(collection) {
       name = req.body.name,
       age = +req.body.age,
       email = req.body.email;
-    if (_id) _id = new mongo.ObjectID(_id);
+    if (_id) {
+      try {
+        _id = new mongo.ObjectID(_id);
+      } catch (e) {
+        res.send({status: false, msg: '所传递的_id不是标准的数据库_id'});
+        return;
+      }
+    }
     var result = check_info(_id, name, age, grade);
     if (!result.status) {
       res.send({status: false, msg: result.msg});
