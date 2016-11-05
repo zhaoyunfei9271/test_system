@@ -68,15 +68,17 @@ function Router(db) {
           .then(function(fight_single_sels) {
             for (var i = 0; i < fight_single_sels.length; i++) {
               var item = fight_single_sels[i];
-              for (var j = 0; j < item.record.length; j++) {
-                var r = item.record[j];
-                if (r.student == _id) {
-                  var ts = item.ts,
-                    addon = logic_func.time_format(ts),
-                    right = r.right || 0,
-                    wrong = r.wrong || 0;
-                  records_ts.push({rs: ts, addon: addon, right: right, wrong: wrong});
-                  break;
+              if (item && item.record && item.record.length > 0) {
+                for (var j = 0; j < item.record.length; j++) {
+                  var r = item.record[j];
+                  if (r.student == _id) {
+                    var ts = item.ts,
+                      addon = logic_func.time_format(ts),
+                      right = r.right || 0,
+                      wrong = r.wrong || 0;
+                    records_ts.push({rs: ts, addon: addon, right: right, wrong: wrong});
+                    break;
+                  }
                 }
               }
             }
