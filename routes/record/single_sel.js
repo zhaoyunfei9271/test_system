@@ -52,6 +52,12 @@ function Router(db) {
       res.send({status: false, msg: '所传递的_id不可为空!'});
       return;
     }
+    try {
+      new mongo.ObjectID(_id);
+    } catch (e) {
+      res.send({status: false, msg: '所传递的_id有误!'});
+      return;
+    }
     fight_col.findOne({_id: new mongo.ObjectID(_id)})
       .then(function(record) {
         var single_sels_ids = record.single_sels || [];
@@ -75,10 +81,16 @@ function Router(db) {
   * 删除单选题挑战记录
   * */
   router.post('/del', function(req, res) {
-    var _id = req.query._id,
+    var _id = req.body._id,
       collection = db.collection('fight_single_sel');
     if (!_id) {
       res.send({status: false, msg: '所传递的_id不可为空!'});
+      return;
+    }
+    try {
+      new mongo.ObjectID(_id);
+    } catch (e) {
+      res.send({status: false, msg: '所传递的_id有误!'});
       return;
     }
     collection.deleteOne({_id: new mongo.ObjectID(_id)})
