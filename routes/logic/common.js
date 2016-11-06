@@ -3,6 +3,9 @@
 * */
 'use strict';
 
+var os = require('os'),
+  ifaces = os.networkInterfaces();
+
 var logic_func = {
   time_format: function(time){
     function two_digits(num){
@@ -23,6 +26,17 @@ var logic_func = {
     var minute = time.getMinutes();
     var second = time.getSeconds();
     return two_digits(year) + '-' + two_digits(month) + '-' + two_digits(date) + ' ' + two_digits(hours) + ':' + two_digits(minute) + ':' + two_digits(second);
+  },
+  get_ipv4: function() {
+    var addr = {};
+    for (var key in ifaces) {
+      for (var i = 0; i < ifaces[key].length; i++) {
+        if ('IPv4' === ifaces[key][i].family) {
+          addr[key] = ifaces[key][i].address;
+        }
+      }
+    }
+    return addr;
   }
 };
 

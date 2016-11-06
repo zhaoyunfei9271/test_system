@@ -11,7 +11,10 @@ var express = require('express'),
   fs = require('fs'),
   path = require('path'),
   multer = require('multer'),
-  upload = multer({dest: 'public/uploads/'});
+  upload = multer({dest: 'public/uploads/'}),
+  logger = require('../log/logger'),
+  os = require('os'),
+  logic_func = require('../logic/common');
 
 // 连接数据库
 var MongoClient = require('mongodb').MongoClient,
@@ -19,10 +22,11 @@ var MongoClient = require('mongodb').MongoClient,
 MongoClient.connect(url)
   .then(function(db) {
     var collection = db.collection('students');
+    logger.log('info', JSON.stringify({ip: logic_func.get_ipv4(), msg: '连接数据库成功!', status: "1"}));
     Router(collection);
   })
   .catch(function(err) {
-    console.log("connected db failed!");
+    logger.log('error', JSON.stringify({ip: logic_func.get_ipv4(), msg: '连接数据库失败!', status: "0"}));
   });
 
 function Router(collection) {
@@ -41,9 +45,25 @@ function Router(collection) {
 
     collection.find(search_cond).toArray()
       .then(function(students) {
+        logger.log('info', JSON.stringify({
+          ip: logic_func.get_ipv4(),
+          method: 'GET',
+          url: '/admin/students/info',
+          params: req.query,
+          msg: '获取学生信息成功!',
+          status: "1"
+        }));
         res.render('admin/students_info', {students: students, name: name, sex: sex, grade: grade});
       })
       .catch(function(err) {
+        logger.log('error', JSON.stringify({
+          ip: logic_func.get_ipv4(),
+          method: 'GET',
+          url: '/admin/students/info',
+          params: req.query,
+          msg: '获取学生信息失败!',
+          status: "0"
+        }));
         res.send({status: false, msg: '获取学生信息失败!'});
       });
   });
@@ -52,6 +72,14 @@ function Router(collection) {
   * 上传学生个人头像
   * */
   router.post('/info/addimg', upload.single('file'), function(req, res) {
+    logger.log('info', JSON.stringify({
+      ip: logic_func.get_ipv4(),
+      method: 'POST',
+      url: '/admin/students/info/addimg',
+      params: req.body,
+      msg: '上传学生个人头像!',
+      status: "1"
+    }));
     var _id = req.body._id;
     if ("" == _id) {
       res.send({status: false, msg: '所传递的学生_id不可为空!'});
@@ -91,6 +119,14 @@ function Router(collection) {
   * 获取单个学生的信息
   * */
   router.get('/info/one', function(req, res) {
+    logger.log('info', JSON.stringify({
+      ip: logic_func.get_ipv4(),
+      method: 'GET',
+      url: '/admin/students/info/one',
+      params: req.query,
+      msg: '获取单个学生的信息!',
+      status: "1"
+    }));
     var _id = req.query._id;
     if ("" == _id) {
       res.send({status: false, msg: '所传递的_id不可为空!'});
@@ -115,6 +151,14 @@ function Router(collection) {
   * 删除单个学生的信息
   * */
   router.post('/info/del', function(req, res) {
+    logger.log('info', JSON.stringify({
+      ip: logic_func.get_ipv4(),
+      method: 'POST',
+      url: '/admin/students/info/del',
+      params: req.body,
+      msg: '删除单个学生的信息!',
+      status: "1"
+    }));
     var _id = req.body._id;
     if ("" == _id) {
       res.send({status: false, msg: '所传递的_id不可为空!'});
@@ -175,6 +219,14 @@ function Router(collection) {
     return {status: true, msg: '正确'};
   }
   router.post('/info/update', function(req, res) {
+    logger.log('info', JSON.stringify({
+      ip: logic_func.get_ipv4(),
+      method: 'POST',
+      url: '/admin/students/info/update',
+      params: req.body,
+      msg: '更新单个学生的信息!',
+      status: "1"
+    }));
     var _id = req.body._id,
       sex = req.body.sex,
       grade = +req.body.grade,
