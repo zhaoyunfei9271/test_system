@@ -14,7 +14,6 @@ var MongoClient = require('mongodb').MongoClient,
 
 MongoClient.connect(url)
   .then(function(db) {
-    logger.log('info', JSON.stringify({ip: logic_func.get_ipv4(), msg: '连接数据库成功!', status: "1"}));
     Router(db);
   })
   .catch(function(err) {

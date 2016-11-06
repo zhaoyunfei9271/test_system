@@ -1,6 +1,7 @@
 # test_system
 - 测试系统, 用于学生英语学习能力的检测, 以及学生检测后能力的可视化展示
-- 基于Node.js + Express框架, 数据库使用MongoDB, 页面模板使用swig, 文件上传使用multer, 测试基于chai/chai-http/mocha, 数据展示使用Plotly.js, 前端使用jQuery/Bootstrap
+- 基于Node.js + Express框架, 数据库使用MongoDB, 页面模板使用swig, 文件上传使用multer, 测试基于chai/chai-http/mocha,
+    数据展示使用Plotly.js, 前端使用jQuery/Bootstrap, 日志记录使用winston, 定时器任务使用node-cron
 
 # 运行
 ```
@@ -42,6 +43,8 @@ mocha --recursive
   |--fight(挑战赛功能模块, 包含单选题挑战赛)
   |
   |--lib(题库功能模块, 包含单选题题库)
+  |
+  |--log(日志系统功能模块)
   |
   |--logic(逻辑功能模块, 用于存储一些通用的函数)
   |
