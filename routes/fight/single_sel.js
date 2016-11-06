@@ -7,16 +7,19 @@
 var express = require('express'),
   router = express.Router(),
   mongo = require('mongodb'),
+  logger = require('../log/logger'),
+  os = require('os'),
   MongoClient = require('mongodb').MongoClient,
   url = 'mongodb://localhost:27017/test_system',
   logic_func = require('../logic/common');
 
 MongoClient.connect(url)
   .then(function(db) {
+    logger.log('info', JSON.stringify({ip: logic_func.get_ipv4(), msg: '连接数据库成功!', status: "1"}));
     Router(db);
   })
   .catch(function(err) {
-    console.log("connected db failed!");
+    logger.log('error', JSON.stringify({ip: logic_func.get_ipv4(), msg: '连接数据库失败!', status: "0"}));
   });
 
 function Router(db) {
@@ -27,9 +30,25 @@ function Router(db) {
     var collection = db.collection('students');
     collection.find({}).toArray()
       .then(function(students) {
+        logger.log('info', JSON.stringify({
+          ip: logic_func.get_ipv4(),
+          method: 'GET',
+          url: '/fight/single_sel',
+          params: req.query,
+          msg: '获取学生信息成功!',
+          status: "1"
+        }));
         res.render('fight/single_sel.html', {students: students});
       })
       .catch(function(err) {
+        logger.log('error', JSON.stringify({
+          ip: logic_func.get_ipv4(),
+          method: 'GET',
+          url: '/fight/single_sel',
+          params: req.query,
+          msg: '获取学生信息失败!',
+          status: "0"
+        }));
         res.send({status: false, msg: '查询数据库有误!'});
       });
   });
@@ -39,6 +58,14 @@ function Router(db) {
   * check='1'代表此单选题已经被选过; 如果全部单选题都被选中过, 则设置所有单选题中check=''
   * */
   router.post('/one', function(req, res) {
+    logger.log('info', JSON.stringify({
+      ip: logic_func.get_ipv4(),
+      method: 'POST',
+      url: '/fight/single_sel/one',
+      params: req.body,
+      msg: '获取单个未选中的单选题!',
+      status: "1"
+    }));
     var collection = db.collection('single_sel');
     collection.findOne({check: {'$ne': '1'}})
       .then(function(one_single_sel) {
@@ -71,6 +98,14 @@ function Router(db) {
   * 更新单选题挑战记录
   * */
   router.post('/update', function(req, res) {
+    logger.log('info', JSON.stringify({
+      ip: logic_func.get_ipv4(),
+      method: 'POST',
+      url: '/fight/single_sel/update',
+      params: req.body,
+      msg: '更新单选题挑战记录!',
+      status: "1"
+    }));
     var _id = req.body._id,
       ts = Date.parse(new Date()) / 1000,
       addon = logic_func.time_format(ts),
@@ -170,6 +205,14 @@ function Router(db) {
   * 获取单选题挑战记录
   * */
   router.get('/info', function(req, res) {
+    logger.log('info', JSON.stringify({
+      ip: logic_func.get_ipv4(),
+      method: 'GET',
+      url: '/fight/single_sel/info',
+      params: req.query,
+      msg: '获取单选题挑战记录!',
+      status: "1"
+    }));
     var _id = req.query._id;
     if (!_id) {
       res.send({status: false, msg: '所传递的_id不可为空!'});

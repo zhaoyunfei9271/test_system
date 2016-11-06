@@ -7,15 +7,19 @@
 var express = require('express'),
   router = express.Router(),
   mongo = require('mongodb'),
+  logger = require('../log/logger'),
+  os = require('os'),
+  logic_func = require('../logic/common'),
   MongoClient = require('mongodb').MongoClient,
   url = 'mongodb://localhost:27017/test_system';
 
 MongoClient.connect(url)
   .then(function(db) {
+    logger.log('info', JSON.stringify({ip: logic_func.get_ipv4(), msg: '连接数据库成功!', status: "1"}));
     Router(db);
   })
   .catch(function(err) {
-    console.log("connected db failed!");
+    logger.log('error', JSON.stringify({ip: logic_func.get_ipv4(), msg: '连接数据库失败!', status: "0"}));
   });
 
 function Router(db) {
@@ -33,10 +37,26 @@ function Router(db) {
             for (var i = 0; i < students.length; i++) {
               students_id_name[students[i]._id.toString()] = students[i].name;
             }
+            logger.log('info', JSON.stringify({
+              ip: logic_func.get_ipv4(),
+              method: 'GET',
+              url: '/record/single_sel',
+              params: req.query,
+              msg: '获取所有挑战记录成功!',
+              status: "1"
+            }));
             res.render('record/single_sel.html', {records: records, students_id_name: students_id_name});
           });
       })
       .catch(function(err) {
+        logger.log('error', JSON.stringify({
+          ip: logic_func.get_ipv4(),
+          method: 'GET',
+          url: '/record/single_sel',
+          params: req.query,
+          msg: '获取所有挑战记录失败!',
+          status: "0"
+        }));
         res.send({status: false, msg: '查询数据库有误!'});
       });
   });
@@ -45,6 +65,14 @@ function Router(db) {
   * 获取特定挑战记录的所有单选题
   * */
   router.get('/info', function(req, res) {
+    logger.log('info', JSON.stringify({
+      ip: logic_func.get_ipv4(),
+      method: 'GET',
+      url: '/record/single_sel/info',
+      params: req.query,
+      msg: '获取特定挑战记录!',
+      status: "1"
+    }));
     var fight_col = db.collection('fight_single_sel'),
       single_sel_col = db.collection('single_sel'),
       _id = req.query._id;
@@ -81,6 +109,14 @@ function Router(db) {
   * 删除单选题挑战记录
   * */
   router.post('/del', function(req, res) {
+    logger.log('info', JSON.stringify({
+      ip: logic_func.get_ipv4(),
+      method: 'POST',
+      url: '/record/single_sel/del',
+      params: req.body,
+      msg: '删除单选题挑战记录!',
+      status: "1"
+    }));
     var _id = req.body._id,
       collection = db.collection('fight_single_sel');
     if (!_id) {

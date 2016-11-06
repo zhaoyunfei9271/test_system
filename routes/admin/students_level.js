@@ -5,6 +5,8 @@
 var express = require('express'),
   router = express.Router(),
   mongo = require('mongodb'),
+  logger = require('../log/logger'),
+  os = require('os'),
   logic_func = require('../logic/common');
 
 var MongoClient = require('mongodb').MongoClient,
@@ -12,10 +14,11 @@ var MongoClient = require('mongodb').MongoClient,
 
 MongoClient.connect(url)
   .then(function(db) {
+    logger.log('info', JSON.stringify({ip: logic_func.get_ipv4(), msg: '连接数据库成功!', status: "1"}));
     Router(db);
   })
   .catch(function(err) {
-    console.log("connected db failed!");
+    logger.log('error', JSON.stringify({ip: logic_func.get_ipv4(), msg: '连接数据库失败!', status: "0"}));
   });
 
 function Router(db) {
@@ -33,9 +36,25 @@ function Router(db) {
     if (!isNaN(+grade)) search_cond['grade'] = +grade;
     collection.find(search_cond).toArray()
       .then(function(students) {
+        logger.log('info', JSON.stringify({
+          ip: logic_func.get_ipv4(),
+          method: 'GET',
+          url: '/admin/students_level',
+          params: req.query,
+          msg: '获取学生能力信息!',
+          status: "1"
+        }));
         res.render('admin/students_level.html', {students: students, name: name, sex: sex, grade: grade});
       })
       .catch(function(err) {
+        logger.log('error', JSON.stringify({
+          ip: logic_func.get_ipv4(),
+          method: 'GET',
+          url: '/admin/students_level',
+          params: req.query,
+          msg: '获取学生能力信息失败!',
+          status: "0"
+        }));
         res.send({status: false, msg: '获取学生信息失败!'});
       });
   });
@@ -44,6 +63,14 @@ function Router(db) {
   * 学生单选题能力展示
   * */
   router.get('/single_sel', function(req, res) {
+    logger.log('info', JSON.stringify({
+      ip: logic_func.get_ipv4(),
+      method: 'GET',
+      url: '/admin/students_level/single_sel',
+      params: req.query,
+      msg: '获取学生单选题能力信息!',
+      status: "1"
+    }));
     var _id = req.query._id,
       fight_col = db.collection('fight_single_sel'),
       students_col = db.collection('students');
@@ -97,6 +124,14 @@ function Router(db) {
   * 批量查看单选题能力展示
   * */
   router.get('/batch_single_sel', function(req, res) {
+    logger.log('info', JSON.stringify({
+      ip: logic_func.get_ipv4(),
+      method: 'GET',
+      url: '/admin/students_level/batch_single_sel',
+      params: req.query,
+      msg: '批量获取学生单选题能力信息!',
+      status: "1"
+    }));
     var _ids = req.query._ids,
       fight_col = db.collection('fight_single_sel'),
       students_col = db.collection('students');
@@ -159,6 +194,14 @@ function Router(db) {
   * 前端传递需要模拟的学生id即可
   * */
   router.post('/joke', function(req, res) {
+    logger.log('info', JSON.stringify({
+      ip: logic_func.get_ipv4(),
+      method: 'POST',
+      url: '/admin/students_level/joke',
+      params: req.body,
+      msg: '产生模拟的单选题挑战记录!',
+      status: "1"
+    }));
     var _ids = req.body._ids,
       ts = Date.parse(new Date()) / 1000,
       collection = db.collection('fight_single_sel');

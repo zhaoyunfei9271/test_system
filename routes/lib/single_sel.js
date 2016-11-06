@@ -8,16 +8,20 @@
 var express = require('express'),
   router = express.Router(),
   mongo = require('mongodb'),
+  logger = require('../log/logger'),
+  os = require('os'),
+  logic_func = require('../logic/common'),
   MongoClient = require('mongodb').MongoClient,
   url = 'mongodb://localhost:27017/test_system';
 
 MongoClient.connect(url)
   .then(function(db) {
     var collection = db.collection('single_sel');
+    logger.log('info', JSON.stringify({ip: logic_func.get_ipv4(), msg: '连接数据库成功!', status: "1"}));
     Router(collection);
   })
   .catch(function(err) {
-    console.log("connected db failed!");
+    logger.log('error', JSON.stringify({ip: logic_func.get_ipv4(), msg: '连接数据库失败!', status: "0"}));
   });
 
 function Router(collection) {
@@ -32,9 +36,25 @@ function Router(collection) {
 
     collection.find(search_cond).toArray()
       .then(function(single_sels) {
+        logger.log('info', JSON.stringify({
+          ip: logic_func.get_ipv4(),
+          method: 'GET',
+          url: '/lib/single_sel',
+          params: req.query,
+          msg: '获取题库中所有的单选题!',
+          status: "1"
+        }));
         res.render('lib/single_sel.html', {single_sels: single_sels, question: question});
       })
       .catch(function(err) {
+        logger.log('error', JSON.stringify({
+          ip: logic_func.get_ipv4(),
+          method: 'GET',
+          url: '/lib/single_sel',
+          params: req.query,
+          msg: '获取题库中所有的单选题失败!',
+          status: "0"
+        }));
         res.send({status: false, msg: '获取题库中单选题失败!'});
       });
   });
@@ -43,6 +63,14 @@ function Router(collection) {
   * 获取单个单选题的信息
   * */
   router.get('/one', function(req, res) {
+    logger.log('info', JSON.stringify({
+      ip: logic_func.get_ipv4(),
+      method: 'GET',
+      url: '/lib/single_sel/one',
+      params: req.query,
+      msg: '获取单个单选题的信息!',
+      status: "1"
+    }));
     var _id = req.query._id;
     if (!_id) {
       res.send({status: false, msg: '所传递的_id不可为空!'});
@@ -67,6 +95,14 @@ function Router(collection) {
   * 删除单个单选题
   * */
   router.post('/del', function(req, res) {
+    logger.log('info', JSON.stringify({
+      ip: logic_func.get_ipv4(),
+      method: 'POST',
+      url: '/lib/single_sel/del',
+      params: req.body,
+      msg: '删除单个单选题的信息!',
+      status: "1"
+    }));
     var _id = req.body._id;
     if (!_id) {
       res.send({status: false, msg: '所传递的_id不可为空!'});
@@ -147,6 +183,14 @@ function Router(collection) {
     return {status: true, msg: '数据正确'};
   }
   router.post('/update', function(req, res) {
+    logger.log('info', JSON.stringify({
+      ip: logic_func.get_ipv4(),
+      method: 'POST',
+      url: '/lib/single_sel/update',
+      params: req.body,
+      msg: '更新单个单选题的信息!',
+      status: "1"
+    }));
     var result = check_fields(req.body);
     if (!result.status) {
       res.send({status: false, msg: result.msg});
