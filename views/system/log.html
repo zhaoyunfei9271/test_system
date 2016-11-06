@@ -1,0 +1,117 @@
+{% extends "../admin/admin_base.html" %}
+
+{% block style %}
+<style type="text/css">
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="">
+  <h5>操作日志记录</h5>
+</div>
+
+<div class="form-group">
+  <div class="form-inline" style="position: relative;">
+    <div class="form-group">
+      <input type="text" name="content" id="search_content" class="form-control inline-block" placeholder="关键字" style="width: 120px;" value="">
+      <select name="level" id="search_level" class="form-control inline-block" value="">
+        <option value="">请选择一个等级</option>
+        <option value="info">info</option>
+        <option value="error">error</option>
+      </select>
+      <select name="status" id="search_status" class="form-control inline-block" value="">
+        <option value="">请选择一个状态</option>
+        <option value="1">正确</option>
+        <option value="0">错误</option>
+      </select>
+      <select name="method" id="search_method" class="form-control inline-block" value="">
+        <option value="">请选择一个请求方法</option>
+        <option value="POST">POST</option>
+        <option value="GET">GET</option>
+      </select>
+    </div>
+    <button type="button" id="search" class="btn btn-success btn-sm"><i class="icon-search"></i>查询</button>
+  </div>
+</div>
+
+<table class="table table-bordered table-hover">
+  <thead>
+  <tr>
+    <th width="50px" class="text-center">
+      <input type="checkbox" class="outerCheck">
+    </th>
+    <th>等级</th>
+    <th>时间</th>
+    <th>ip</th>
+    <th>方法</th>
+    <th>url</th>
+    <th>参数</th>
+    <th>信息</th>
+    <th>状态</th>
+  </tr>
+  </thead>
+  <tbody>
+  {% for item in logs %}
+  <tr">
+    <td width="50px" class="text-center">
+      <input type="checkbox" class="CheckBox">
+    </td>
+    <td>{{item.level}}</td>
+    <td>{{item.timestamp}}</td>
+    <td>{{item.message && JSON.stringify(item.message.ip)}}</td>
+    <td>{{item.message && item.message.method}}</td>
+    <td>{{item.message && item.message.url}}</td>
+    {% if item.message && JSON.stringify(item.message.params).length > 50 %}
+      {% set params = JSON.stringify(item.message.params) %}
+      <td title="{{params}}">{{params.substr(0, 50) + "  ..."}}</td>
+    {% else %}
+      <td>{{item.message && JSON.stringify(item.message.params)}}</td>
+    {% endif %}
+    <td>{{item.message && item.message.msg}}</td>
+    {% if item.message && item.message.status && item.message.status == '1' %}
+      <td>成功</td>
+    {% else %}
+      <td>失败</td>
+    {% endif %}
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript">
+  'use strict';
+  $(function() {
+    set_nav('system_log');
+    // 初始化
+    function init() {
+      $('#search_content').val("{{content}}");
+      $('#search_level').val("{{level}}");
+      $('#search_status').val("{{status}}");
+      $('#search_method').val("{{method}}");
+    }
+    init();
+    // 查询
+    function search() {
+      var content = $('#search_content').val(),
+          level = $('#search_level').val(),
+          status = $('#search_status').val(),
+          method = $('#search_method').val(),
+          url = '/system/log?',
+          cond = '';
+      if (content) cond += '&content=' + content;
+      if (level) cond += '&level=' + level;
+      if (status) cond += '&status=' + status;
+      if (method) cond += '&method=' + method;
+      if (cond) location.href = url + cond.substring(1, cond.length);
+      else location.href = url;
+    }
+    $('#search').on('click', function() {
+      search();
+    });
+
+  });
+</script>
+{% endblock %}

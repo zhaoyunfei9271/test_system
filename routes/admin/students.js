@@ -52,7 +52,7 @@ function Router(collection) {
           msg: '获取学生信息成功!',
           status: "1"
         }));
-        res.render('admin/students_info', {students: students, name: name, sex: sex, grade: grade});
+        res.render('admin/students_info.html', {students: students, name: name, sex: sex, grade: grade});
       })
       .catch(function(err) {
         logger.log('error', JSON.stringify({
